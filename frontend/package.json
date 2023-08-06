@@ -23,11 +23,14 @@
   },
   "homepage": "https://github.com/hjlarry/flaskshop#readme",
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.2.3",
+    "fs-promise": "^2.0.3",
     "lazysizes": "^5.3.2",
     "svg-injector-2": "^2.1.5"
   },
   "devDependencies": {
+    "@babel/core": "^7.22.9",
     "@babel/eslint-parser": "^7.21.3",
     "autoprefixer": "^10.4.14",
     "babel-loader": "^9.1.2",
@@ -37,11 +40,13 @@
     "eslint-plugin-import": "latest",
     "file-loader": "^6.2.0",
     "mini-css-extract-plugin": "^2.7.5",
+    "node-sass": "^9.0.0",
     "postcss-loader": "^7.1.0",
     "run-script-os": "^1.1.6",
     "sass": "^1.60.0",
-    "sass-loader": "^13.2.1",
-    "webpack": "^5.76.3",
-    "webpack-cli": "^5.0.1"
+    "sass-loader": "^13.3.2",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
   }
 }

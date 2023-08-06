@@ -27,7 +27,7 @@
         text-transform: uppercase;
         display: inline-block;
         padding: $global-padding * 1.5;
-        font-size: 1.5rem;
+        font-size: 1rem;
 
         &:hover {
           color: rgba($body-color, 0.6);
@@ -72,17 +72,18 @@
 
             >ul {
               min-width: 120px;
-              width: 360px;
-              display: flex;
+              width: auto;
+              display: block;
               flex-wrap: wrap;
 
               li {
-                display: inline-block;
+                display: block;
                 max-width: 110px;
 
-                &:not(:last-child) {
-                  margin-right: $global-padding * 2;
-                }
+               
+                margin-right: $global-padding * 2;
+
+                
               }
             }
           }
@@ -138,6 +139,14 @@
 
 .navbar {
   padding: 0;
+
+  
+  img {
+    max-width: 100%;
+    height: 50px;
+    padding-left: 0.55rem;
+  }
+
 
   @include media-breakpoint-down(sm) {
     >.container-fluid {

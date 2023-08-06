@@ -7,7 +7,7 @@ from pathlib import Path
 class DBConfig:
     db_type = os.getenv("DB_TYPE", "mysql")
     user = os.getenv("DB_USER", "root")
-    passwd = os.getenv("DB_PASSWD", "123456")
+    passwd = os.getenv("DB_PASSWD", "root")
     host = os.getenv("DB_HOST", "127.0.0.1")
     port = os.getenv("DB_PORT", 3306)
     db_name = os.getenv("DB_NAME", "flaskshop")
