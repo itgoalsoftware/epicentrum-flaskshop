@@ -126,13 +126,15 @@ class Product(Model):
         db.session.commit()
 
     def update_attributes(self, attr_values):
-        attr_entries = [str(item.id) for item in self.product_type.product_attributes]
+        attr_entries = [str(item.id)
+                        for item in self.product_type.product_attributes]
         attributes = dict(zip(attr_entries, attr_values))
         self.attributes = attributes
 
     def generate_variants(self):
         if not self.product_type.has_variants:
-            ProductVariant.create(sku=str(self.id) + "-1337", product_id=self.id)
+            ProductVariant.create(
+                sku=str(self.id) + "-1337", product_id=self.id)
         else:
             sku_id = 1337
             variant_attributes = self.product_type.variant_attributes[0]
@@ -167,7 +169,8 @@ class Product(Model):
 
     @staticmethod
     def clear_category_cache(target):
-        keys = rdb.keys(MC_KEY_CATEGORY_PRODUCTS.format(target.category_id, "*"))
+        keys = rdb.keys(MC_KEY_CATEGORY_PRODUCTS.format(
+            target.category_id, "*"))
         for key in keys:
             rdb.delete(key)
 
@@ -252,12 +255,42 @@ class Category(Model):
     @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{category_id}", "{page}"))
     def get_product_by_category(cls, category_id, page):
         category = Category.get_by_id(category_id)
-        all_category_ids = [child.id for child in category.children] + [category.id]
+        all_category_ids = [
+            child.id for child in category.children] + [category.id]
         query = Product.query.filter(Product.category_id.in_(all_category_ids))
         ctx, query = get_product_list_context(query, category)
         pagination = query.paginate(page, per_page=16)
         del pagination.query
-        ctx.update(object=category, pagination=pagination, products=pagination.items)
+        ctx.update(object=category, pagination=pagination,
+                   products=pagination.items)
+        return ctx
+
+    @classmethod
+    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{title}", "{page}"))
+    def get_product_by_category_title(cls, title, page):
+        category = Category.query.filter_by(title=title).first()
+        all_category_ids = [
+            child.id for child in category.children] + [category.id]
+        query = Product.query.filter(Product.category_id.in_(all_category_ids))
+        ctx, query = get_product_list_context(query, category)
+        pagination = query.paginate(page, per_page=16)
+        del pagination.query
+        ctx.update(object=category, pagination=pagination,
+                   products=pagination.items)
+        return ctx
+
+    @classmethod
+    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{title}", "{page}"))
+    def get_product_by_category(cls, title, page):
+        category = Category.get_by_id(title)
+        all_category_ids = [
+            child.id for child in category.children] + [category.id]
+        query = Product.query.filter(Product.category_id.in_(all_category_ids))
+        ctx, query = get_product_list_context(query, category)
+        pagination = query.paginate(page, per_page=16)
+        del pagination.query
+        ctx.update(object=category, pagination=pagination,
+                   products=pagination.items)
         return ctx
 
     @classmethod
@@ -268,7 +301,8 @@ class Category(Model):
         for child in self.children:
             child.parent_id = 0
             db.session.add(child)
-        need_update_products = Product.query.filter_by(category_id=self.id).all()
+        need_update_products = Product.query.filter_by(
+            category_id=self.id).all()
         for product in need_update_products:
             product.category_id = 0
             db.session.add(product)
@@ -404,7 +438,8 @@ class ProductType(Model):
 
         for item in itertools.chain(need_del_product_attrs, need_del_variant_attrs):
             item.delete(commit=False)
-        need_update_products = Product.query.filter_by(product_type_id=self.id).all()
+        need_update_products = Product.query.filter_by(
+            product_type_id=self.id).all()
         for product in need_update_products:
             product.product_type_id = 0
             db.session.add(product)
@@ -695,7 +730,8 @@ class Collection(Model):
         db.session.commit()
 
     def delete(self):
-        need_del = ProductCollection.query.filter_by(collection_id=self.id).all()
+        need_del = ProductCollection.query.filter_by(
+            collection_id=self.id).all()
         for item in need_del:
             item.delete(commit=False)
         db.session.delete(self)
@@ -724,12 +760,14 @@ class ProductCollection(Model):
         ctx, query = get_product_list_context(query, collection)
         pagination = query.paginate(page, per_page=16)
         del pagination.query
-        ctx.update(object=collection, pagination=pagination, products=pagination.items)
+        ctx.update(object=collection, pagination=pagination,
+                   products=pagination.items)
         return ctx
 
     @staticmethod
     def clear_mc(target):
-        keys = rdb.keys(MC_KEY_COLLECTION_PRODUCTS.format(target.collection_id, "*"))
+        keys = rdb.keys(MC_KEY_COLLECTION_PRODUCTS.format(
+            target.collection_id, "*"))
         for key in keys:
             rdb.delete(key)
 
@@ -784,7 +822,8 @@ def get_product_list_context(query, obj):
     for attr in attr_filter:
         value = request.args.get(attr.title)
         if value:
-            query = query.filter(Product.attributes.__getitem__(str(attr.id)) == value)
+            query = query.filter(
+                Product.attributes.__getitem__(str(attr.id)) == value)
             args_dict["default_attr"].update({attr.title: int(value)})
     args_dict.update(attr_filter=attr_filter)
 
