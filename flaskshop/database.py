@@ -105,4 +105,9 @@ class CRUDMixin:
 class Model(CRUDMixin, db.Model):
     """Base model class that includes CRUD convenience methods."""
 
+    @classmethod
+    @cache(MC_KEY_GET_BY_ID.format("{cls.__name__}", "{title}"))
+    def get_by_title(cls, title):
+        return cls.query.filter_by(title=title).first()
+
     __abstract__ = True

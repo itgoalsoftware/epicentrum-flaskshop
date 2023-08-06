@@ -268,7 +268,7 @@ class Category(Model):
     @classmethod
     @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{title}", "{page}"))
     def get_product_by_category_title(cls, title, page):
-        category = Category.query.filter_by(title=title).first()
+        category = Category.get_by_title(title)
         all_category_ids = [
             child.id for child in category.children] + [category.id]
         query = Product.query.filter(Product.category_id.in_(all_category_ids))
