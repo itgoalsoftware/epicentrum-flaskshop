@@ -287,20 +287,6 @@ class Category(Model):
         return ctx
 
     @classmethod
-    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{title}", "{page}"))
-    def get_product_by_category(cls, title, page):
-        category = Category.get_by_id(title)
-        all_category_ids = [
-            child.id for child in category.children] + [category.id]
-        query = Product.query.filter(Product.category_id.in_(all_category_ids))
-        ctx, query = get_product_list_context(query, category)
-        pagination = query.paginate(page, per_page=16)
-        del pagination.query
-        ctx.update(object=category, pagination=pagination,
-                   products=pagination.items)
-        return ctx
-
-    @classmethod
     def first_level_items(cls):
         return cls.query.filter(cls.parent_id == 0).all()
 

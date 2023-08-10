@@ -42,6 +42,12 @@ def variant_price(id):
     return jsonify({"price": float(variant.price), "stock": variant.stock})
 
 
+def show_category():
+    page = request.args.get("page", 1, type=int)
+    ctx = Category.get_product_by_category(id, page)
+    return render_template("category/index.html", **ctx)
+
+
 def show_category(id):
     page = request.args.get("page", 1, type=int)
     ctx = Category.get_product_by_category(id, page)
@@ -70,6 +76,7 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/api/variant_price/<int:id>", view_func=variant_price)
     bp.add_url_rule("/<int:id>/add",
                     view_func=product_add_to_cart, methods=["POST"])
+    bp.add_url_rule("/category/", view_func=show_category)
     bp.add_url_rule("/category/<int:id>", view_func=show_category)
     bp.add_url_rule("/category/<path:title>", view_func=show_category_by_title)
     bp.add_url_rule("/collection/<int:id>", view_func=show_collection)
