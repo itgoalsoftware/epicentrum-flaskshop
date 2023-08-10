@@ -19,10 +19,12 @@ from flaskshop.plugin import manager, spec
 from flaskshop.plugin.models import PluginRegistry
 from flaskshop.settings import Config
 from flaskshop.utils import jinja_global_varibles, log_slow_queries
+from flaskshop.converters import HyphenConverter
 
 
 def create_app(config_object=Config):
     app = Flask(__name__.split(".")[0])
+    app.url_map.converters['hyphen'] = HyphenConverter
     app.config.from_object(config_object)
     app.pluggy = manager.FlaskshopPluginManager("flaskshop")
     register_extensions(app)

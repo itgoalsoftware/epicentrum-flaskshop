@@ -248,7 +248,8 @@ class Category(Model):
         attr_filter = set()
         for product in self.products:
             for attr in product.product_type.product_attributes:
-                attr_filter.add(attr)
+                if attr.title not in ["Size", "Year", "Reference", "Publisher"]:
+                    attr_filter.add(attr)
         return attr_filter
 
     @classmethod

@@ -19,6 +19,13 @@ def show(id, form=None):
     return render_template("products/details.html", product=product, form=form)
 
 
+def show_product_by_full_title(product_title, form=None):
+    product = Product.get_by_title(product_title)
+    if not form:
+        form = AddCartForm(request.form, product=product)
+    return render_template("products/details.html", product=product, form=form)
+
+
 @login_required
 def product_add_to_cart(id):
     """this method return to the show method and use a form instance for display validater errors"""
@@ -57,6 +64,9 @@ def show_collection(id):
 def flaskshop_load_blueprints(app):
     bp = Blueprint("product", __name__)
     bp.add_url_rule("/<int:id>", view_func=show)
+    bp.add_url_rule("/<hyphen:product_title>",
+                    view_func=show_product_by_full_title)
+
     bp.add_url_rule("/api/variant_price/<int:id>", view_func=variant_price)
     bp.add_url_rule("/<int:id>/add",
                     view_func=product_add_to_cart, methods=["POST"])
