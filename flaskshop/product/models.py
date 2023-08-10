@@ -248,9 +248,15 @@ class Category(Model):
         attr_filter = set()
         for product in self.products:
             for attr in product.product_type.product_attributes:
-                if attr.title not in ["Size", "Year", "Reference", "Publisher"]:
+                if attr.title not in ["Size", "Year", "Reference", "Publisher", "Artist"]:
                     attr_filter.add(attr)
-        return attr_filter
+        order_of_names = ["Technique", "Signature", "Period"]
+
+        def get_sort_index(attr):
+            return order_of_names.index(attr.title) if attr.title in order_of_names else len(order_of_names)
+
+        sorted_attr_filter = sorted(attr_filter, key=get_sort_index)
+        return sorted_attr_filter
 
     @classmethod
     @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{category_id}", "{page}"))
@@ -797,7 +803,7 @@ def get_product_list_context(query, obj):
     if price_from:
         query = query.filter(Product.basic_price > price_from)
     if price_to:
-        query = query.filter(Product.basic_price < price_to)
+        query = query.filter(Product.basic_price <= price_to)
     args_dict.update(price_from=price_from, price_to=price_to)
 
     sort_by_choices = {"title": "title", "basic_price": "price"}
