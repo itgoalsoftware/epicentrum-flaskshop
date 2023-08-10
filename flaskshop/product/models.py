@@ -287,6 +287,26 @@ class Category(Model):
         return ctx
 
     @classmethod
+    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{category_id}", "{page}"))
+    def get_all_categories(cls):
+        categories = Category.query.all()
+        categories_with_product_count = []
+
+        for category in categories:
+            product_count = Product.query.filter(
+                Product.category_id == category.id).count()
+            categories_with_product_count.append((category, product_count))
+
+        ctx = {}
+        # ctx, query = get_product_list_context(query, category)
+        # pagination = query.paginate(page, per_page=16)
+        # del pagination.query
+        # ctx.update(artists=categories, pagination=pagination,
+        #            products=pagination.items)
+        ctx.update(categories_with_product_count=categories_with_product_count)
+        return ctx
+
+    @classmethod
     def first_level_items(cls):
         return cls.query.filter(cls.parent_id == 0).all()
 
