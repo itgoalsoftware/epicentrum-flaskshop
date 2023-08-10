@@ -5,7 +5,8 @@ from pluggy import HookimplMarker
 
 from flaskshop.account.models import User
 from flaskshop.extensions import login_manager
-from flaskshop.product.models import Product
+from flaskshop.product.models import Product, Category
+from sqlalchemy.orm import aliased
 
 from .models import Page
 from .search import Item
@@ -35,12 +36,20 @@ def favicon():
 def search():
     query = request.args.get("q", "")
     page = request.args.get("page", default=1, type=int)
+
     if current_app.config["USE_ES"]:
         pagination = Item.new_search(query, page)
     else:
-        pagination = Product.query.filter(Product.title.ilike(f"%{query}%")).paginate(
-            page
-        )
+        query = f"%{query}%"
+
+        # Alias the Category model for use in the subquery
+        category_subquery = aliased(Category)
+
+        pagination = Product.query.join(category_subquery, category_subquery.id == Product.category_id).filter(
+            (Product.title.ilike(query)) | (
+                category_subquery.title.ilike(query))
+        ).paginate(page)
+
     return render_template(
         "public/search_result.html",
         products=pagination.items,
