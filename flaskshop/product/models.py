@@ -107,6 +107,17 @@ class Product(Model):
         }
         return items
 
+    @property
+    def title_map_for_attributes(self):
+        title_map = {}
+        for k, v in self.attributes.items():
+            product_attribute = ProductAttribute.get_by_id(k)
+            attribute_choice_value = AttributeChoiceValue.get_by_id(v)
+
+            if product_attribute is not None and attribute_choice_value is not None:
+                title_map[product_attribute.title] = attribute_choice_value.title
+        return title_map
+
     @classmethod
     @cache(MC_KEY_FEATURED_PRODUCTS.format("{num}"))
     def get_featured_product(cls, num=8):
@@ -518,6 +529,17 @@ class ProductVariant(Model):
             for k, v in self.attributes.items()
         }
         return items
+
+    @property
+    def title_map_for_attributes(self):
+        title_map = {}
+        for k, v in self.attributes.items():
+            product_attribute = ProductAttribute.get_by_id(k)
+            attribute_choice_value = AttributeChoiceValue.get_by_id(v)
+
+            if product_attribute is not None and attribute_choice_value is not None:
+                title_map[product_attribute.title] = attribute_choice_value.title
+        return title_map
 
     def check_enough_stock(self, quantity):
         if self.stock < quantity:

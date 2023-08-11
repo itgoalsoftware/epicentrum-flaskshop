@@ -141,11 +141,20 @@
     </div>
     <hr>
     <table>
-      {% for attribute, value in product.attribute_map.items() %}
-      <tr>
-        <td>{{ attribute }}:</td>
-        <td><strong>{{ value }}</strong></td>
-      </tr>
+      {% set year_exists = "Year" in product.title_map_for_attributes %}
+      {% for attribute, value in product.title_map_for_attributes.items() %}
+        {% if year_exists and attribute == "Period" %}
+          <!-- Omit both attribute and value for Period if Year exists -->
+        {% else %}
+          <tr>
+            <td>{{ attribute }}:</td>
+            <td>
+              <strong>
+                {{ value }}
+              </strong>
+            </td>
+          </tr>
+        {% endif %}
       {% endfor %}
     </table>
   </div>
