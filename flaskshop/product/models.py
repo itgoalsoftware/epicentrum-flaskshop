@@ -136,6 +136,20 @@ class Product(Model):
             ProductImage.get_by_id(id).delete(commit=False)
         db.session.commit()
 
+    @classmethod
+    @cache_by_args(MC_KEY_ARTIST_PRODUCTS.format("{artist_id}", "{page}"))
+    def get_all_products(cls):
+        products = Product.query.all()
+
+        ctx, query = get_product_list_context(query, artist)
+        pagination = query.paginate(page, per_page=16)
+        del pagination.query
+        ctx.update(object=artist, pagination=pagination,
+                   products=pagination.items)
+        return ctx
+        ctx.update(products=products)
+        return ctx
+
     def update_attributes(self, attr_values):
         attr_entries = [str(item.id)
                         for item in self.product_type.product_attributes]
@@ -743,8 +757,15 @@ class Collection(Model):
         attr_filter = set()
         for product in self.products:
             for attr in product.product_type.product_attributes:
-                attr_filter.add(attr)
-        return attr_filter
+                if attr.title not in ["Size", "Year", "Reference", "Publisher"]:
+                    attr_filter.add(attr)
+        order_of_names = ["Artist", "Technique", "Signature", "Period"]
+
+        def get_sort_index(attr):
+            return order_of_names.index(attr.title) if attr.title in order_of_names else len(order_of_names)
+
+        sorted_attr_filter = sorted(attr_filter, key=get_sort_index)
+        return sorted_attr_filter
 
     def update_products(self, new_products):
         origin_ids = (
