@@ -7,7 +7,7 @@ from pluggy import HookimplMarker
 from flaskshop.checkout.models import Cart
 
 from .forms import AddCartForm
-from .models import Category, Product, ProductCollection, ProductVariant
+from .models import Artist, Product, ProductCollection, ProductVariant
 
 impl = HookimplMarker("flaskshop")
 
@@ -42,28 +42,28 @@ def variant_price(id):
     return jsonify({"price": float(variant.price), "stock": variant.stock})
 
 
-def show_all_categories():
+def show_all_artists():
     # page = request.args.get("page", 1, type=int)
-    ctx = Category.get_all_categories()
-    return render_template("category/artists.html", **ctx)
+    ctx = Artist.get_all_artists()
+    return render_template("artist/artists.html", **ctx)
 
 
-def show_category(id):
+def show_artist(id):
     page = request.args.get("page", 1, type=int)
-    ctx = Category.get_product_by_category(id, page)
-    return render_template("category/index.html", **ctx)
+    ctx = Artist.get_product_by_artist(id, page)
+    return render_template("artist/index.html", **ctx)
 
 
-def show_category_by_title(title):
+def show_artist_by_title(title):
     page = request.args.get("page", 1, type=int)
-    ctx = Category.get_product_by_category_title(title, page)
-    return render_template("category/index.html", **ctx)
+    ctx = Artist.get_product_by_artist_title(title, page)
+    return render_template("artist/index.html", **ctx)
 
 
 def show_collection(id):
     page = request.args.get("page", 1, type=int)
     ctx = ProductCollection.get_product_by_collection(id, page)
-    return render_template("category/index.html", **ctx)
+    return render_template("artist/index.html", **ctx)
 
 
 @impl
@@ -76,9 +76,9 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/api/variant_price/<int:id>", view_func=variant_price)
     bp.add_url_rule("/<int:id>/add",
                     view_func=product_add_to_cart, methods=["POST"])
-    bp.add_url_rule("/category", view_func=show_all_categories)
-    bp.add_url_rule("/category/<int:id>", view_func=show_category)
-    bp.add_url_rule("/category/<path:title>", view_func=show_category_by_title)
+    bp.add_url_rule("/artist", view_func=show_all_artists)
+    bp.add_url_rule("/artist/<int:id>", view_func=show_artist)
+    bp.add_url_rule("/artist/<path:title>", view_func=show_artist_by_title)
     bp.add_url_rule("/collection/<int:id>", view_func=show_collection)
 
     app.register_blueprint(bp, url_prefix="/products")

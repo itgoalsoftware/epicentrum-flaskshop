@@ -1,59 +1,61 @@
-{% extends "base.html" %}
-
-{% block content %}
-  <div class="home">
-    <div class="row">
-      <div class="col-sm-12 home__block1">
-        <div class="home--square">
-          <div class="home--content">
-            <div class="home--content-wrapper">
-              <div class="home--content-inner">
-                <h1>{% trans %}Artists Base{% endtrans %}</h1>
-                <h2>{% trans %}{% endtrans %}</h2>
-                <a class="btn btn-secondary home__button" href="/products/category">
-                  {% trans %}Discover by artist{% endtrans %}
-                </a>
-              </div>
+{% extends "base.html" %} {% block content %}
+<div class="home">
+  <div class="row">
+    <div class="col-sm-12 home__block1">
+      <div class="home--square">
+        <div class="home--content">
+          <div class="home--content-wrapper">
+            <div class="home--content-inner">
+              <h1>{% trans %}Artists Base{% endtrans %}</h1>
+              <h2>{% trans %}{% endtrans %}</h2>
+              <a class="btn btn-secondary home__button" href="/products/artist">
+                {% trans %}Discover by artist{% endtrans %}
+              </a>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12 col-md-6 home__block2">
-        <div class="home--square">
-          <div class="home--content">
-            <div class="home--content-wrapper">
-              <div class="home--content-inner">
-                <h1>{% trans %}Orginal prints{% endtrans %}</h1>
-                <h2>{% trans %}All available works for sale{% endtrans %}</h2>
-                <a class="btn btn-secondary home__button" href="#">{% trans %}Browse our stock{% endtrans %}</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-12 col-md-6 home__block3">
-        <div class="home--square">
-          <div class="home--content">
-            <div class="home--content-wrapper">
-              <div class="home--content-inner">
-                <h1>{% trans %}Monthly news{% endtrans %}</h1>
-                <h2>{% trans %}Discover works from our last update{% endtrans %}</h2>
-                <a class="btn btn-secondary home__button" href="#">{% trans %}See new arrivals{% endtrans %}</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% if products %}
-      <div class="home__featured">
-        <h2 class="text-center">{% trans %}Featured works{% endtrans %}</h2>
-        <div class="row">
-          {% include('products/_items.html') %}
-        </div>
-      </div>
-    {% endif %}
   </div>
+  <div class="row">
+    <div class="col-sm-12 col-md-6 home__block2">
+      <div class="home--square">
+        <div class="home--content">
+          <div class="home--content-wrapper">
+            <div class="home--content-inner">
+              <h1>{% trans %}Orginal prints{% endtrans %}</h1>
+              <h2>{% trans %}All available works for sale{% endtrans %}</h2>
+              <a class="btn btn-secondary home__button" href="#"
+                >{% trans %}Browse our stock{% endtrans %}</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-6 home__block3">
+      <div class="home--square">
+        <div class="home--content">
+          <div class="home--content-wrapper">
+            <div class="home--content-inner">
+              <h1>{% trans %}Monthly news{% endtrans %}</h1>
+              <h2>
+                {% trans %}Discover works from our last update{% endtrans %}
+              </h2>
+              <a class="btn btn-secondary home__button" href="#"
+                >{% trans %}See new arrivals{% endtrans %}</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if products %}
+  <div class="home__featured">
+    <h2 class="text-center">{% trans %}Featured works{% endtrans %}</h2>
+    <div class="row">{% include('products/_items.html') %}</div>
+  </div>
+  {% endif %}
+</div>
 {% endblock %}

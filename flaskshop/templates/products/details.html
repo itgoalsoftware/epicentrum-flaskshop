@@ -1,75 +1,94 @@
-{% extends "base.html" %}
-{% from 'bootstrap5/form.html' import render_field %}
-
-{% block title %}
-{{ product.name }}
-{% endblock %}
-{{ bootstrap.load_css() }}
-
+{% extends "base.html" %} {% from 'bootstrap5/form.html' import render_field %}
+{% block title %} {{ product.name }} {% endblock %} {{ bootstrap.load_css() }}
 {% block breadcrumb %}
 <ul class="breadcrumbs list-unstyled">
   <li>
-    <a href="{{ url_for('public.home') }}">
-      Home
-    </a>
+    <a href="{{ url_for('public.home') }}"> Home </a>
   </li>
-  {% if product.category %}
+  {% if product.artist %}
   <li>
-    <a href="{{ product.category.get_absolute_url() }}">{{ product.category }}</a>
+    <a href="{{ product.artist.get_absolute_url() }}">{{ product.artist }}</a>
   </li>
   {% endif %}
   <li>
     <a href="{{ product.get_absolute_url() }}">{{ product }}</a>
   </li>
 </ul>
-{% endblock breadcrumb %}
-
-{% block content %}
+{% endblock breadcrumb %} {% block content %}
 
 <div class="row product">
-
   <div class="col-md-6 col-12 product__gallery">
-    {% with images=product.images %}
-    {% if images %}
-    <div id="carousel-example-generic" class="carousel slide" data-bs-ride="carousel">
+    {% with images=product.images %} {% if images %}
+    <div
+      id="carousel-example-generic"
+      class="carousel slide"
+      data-bs-ride="carousel"
+    >
       <div class="carousel-inner" role="listbox">
         {% for image in images %}
         <div class="carousel-item{% if loop.first %} active{% endif %}">
-          <img class="d-block img-fluid lazyload lazypreload" alt="" src="{{ image }}" data-src="{{ image }}"
-            width=255 />
+          <img
+            class="d-block img-fluid lazyload lazypreload"
+            alt=""
+            src="{{ image }}"
+            data-src="{{ image }}"
+            width="255"
+          />
         </div>
         {% endfor %}
       </div>
       {% if images|length > 1 %}
-      <a class="carousel-control-prev" data-bs-target="#carousel-example-generic" role="button" data-bs-slide="prev">
-        <svg data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"></svg>
+      <a
+        class="carousel-control-prev"
+        data-bs-target="#carousel-example-generic"
+        role="button"
+        data-bs-slide="prev"
+      >
+        <svg
+          data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"
+        ></svg>
       </a>
-      <a class="carousel-control-next" data-bs-target="#carousel-example-generic" role="button" data-bs-slide="next">
-        <svg data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"></svg>
+      <a
+        class="carousel-control-next"
+        data-bs-target="#carousel-example-generic"
+        role="button"
+        data-bs-slide="next"
+      >
+        <svg
+          data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"
+        ></svg>
       </a>
 
       {% endif %}
       <ol class="carousel-indicators d-none d-md-block">
-        {% for image in images %}
-        {% if images|length > 1 %}
-        <li data-bs-target="#carousel-example-generic" data-bs-slide-to="{{ loop.index - 1 }}" {% if loop.first %}
-          class="active" {% endif %}>
-          <img class="lazyload lazypreload" src="{{ image }}" data-src="{{ image }}">
+        {% for image in images %} {% if images|length > 1 %}
+        <li
+          data-bs-target="#carousel-example-generic"
+          data-bs-slide-to="{{ loop.index - 1 }}"
+          {%
+          if
+          loop.first
+          %}
+          class="active"
+          {%
+          endif
+          %}
+        >
+          <img
+            class="lazyload lazypreload"
+            src="{{ image }}"
+            data-src="{{ image }}"
+          />
         </li>
-        {% endif %}
-        {% endfor %}
+        {% endif %} {% endfor %}
       </ol>
     </div>
     {% else %}
-    <img alt="" class="img-fluid lazyload lazypreload">
-    {% endif %}
-    {% endwith %}
+    <img alt="" class="img-fluid lazyload lazypreload" />
+    {% endif %} {% endwith %}
   </div>
   <div class="col-md-6 col-12 product__info">
-    <h1 class="product__info__name">
-      {{ product }}
-    </h1>
-
+    <h1 class="product__info__name">{{ product }}</h1>
 
     <h2 class="product__info__price">
       <span class="text-info">$ {{product.price}}</span>
@@ -78,40 +97,49 @@
         {{product.basic_price}}
       </small>
       {% endif %}
-      <small class="stock">
-
-      </small>
+      <small class="stock"> </small>
     </h2>
 
-    {% if product.on_sale %}
-    {% block orderform %}
-    <form id="product-form" role="form" class="product-form1 clearfix" method="post"
-      action="{{ url_for('product.product_add_to_cart', id=product.id) }}">
-      {{ form.csrf_token }}
-      {% if form.variant.choices | length > 1 %}
+    {% if product.on_sale %} {% block orderform %}
+    <form
+      id="product-form"
+      role="form"
+      class="product-form1 clearfix"
+      method="post"
+      action="{{ url_for('product.product_add_to_cart', id=product.id) }}"
+    >
+      {{ form.csrf_token }} {% if form.variant.choices | length > 1 %}
       <div class="variant-picker">
-        <div class="variant-picker__label">{{ form.variant.label.text|safe }}</div>
+        <div class="variant-picker__label">
+          {{ form.variant.label.text|safe }}
+        </div>
         <div class="btn-group" role="group" aria-label="select variant">
           {% for item in form.variant -%}
-          <input type="radio" class="btn-check variant-picker__option" name="variant" id="{{item.id}}"
-            autocomplete="off" value="{{item.data}}" required>
-          <label class="btn btn-outline-primary" for="{{item.id}}">{{ item.label.text|safe
-            }}</label>
+          <input
+            type="radio"
+            class="btn-check variant-picker__option"
+            name="variant"
+            id="{{item.id}}"
+            autocomplete="off"
+            value="{{item.data}}"
+            required
+          />
+          <label class="btn btn-outline-primary" for="{{item.id}}"
+            >{{ item.label.text|safe }}</label
+          >
           {% endfor %}
         </div>
 
         {% if form.variant.errors %}
-        <div class="is-invalid "></div>
-        <div class="invalid-feedback">{% trans %}Please choose a variant!{% endtrans %}</div>
+        <div class="is-invalid"></div>
+        <div class="invalid-feedback">
+          {% trans %}Please choose a variant!{% endtrans %}
+        </div>
         {% endif %}
       </div>
-      {% else %}
-      {% for item in form.variant -%}
-      <label class="d-none">
-        {{ item(checked='checked')|safe }}
-      </label>
-      {% endfor %}
-      {% endif %}
+      {% else %} {% for item in form.variant -%}
+      <label class="d-none"> {{ item(checked='checked')|safe }} </label>
+      {% endfor %} {% endif %}
 
       <div class="product__info__quantity">
         {{ render_field(form.quantity) }}
@@ -131,31 +159,29 @@
 
     {% else %}
     <p class="alert alert-warning">
-      {% trans %}This product is currently{% endtrans %} <strong>{% trans %}unavailable{% endtrans %}</strong>.
+      {% trans %}This product is currently{% endtrans %}
+      <strong>{% trans %}unavailable{% endtrans %}</strong>.
     </p>
     {% endif %}
     <div class="product__info__description">
       <h3>{% trans %}Description{% endtrans %}</h3>
-      <hr>
+      <hr />
       {{ product.description|safe }}
     </div>
-    <hr>
+    <hr />
     <table>
-      {% set year_exists = "Year" in product.title_map_for_attributes %}
-      {% for attribute, value in product.title_map_for_attributes.items() %}
-        {% if year_exists and attribute == "Period" %}
-          <!-- Omit both attribute and value for Period if Year exists -->
-        {% else %}
-          <tr>
-            <td>{{ attribute }}:</td>
-            <td>
-              <strong>
-                {{ value }}
-              </strong>
-            </td>
-          </tr>
-        {% endif %}
-      {% endfor %}
+      {% set year_exists = "Year" in product.title_map_for_attributes %} {% for
+      attribute, value in product.title_map_for_attributes.items() %} {% if
+      year_exists and attribute == "Period" %}
+      <!-- Omit both attribute and value for Period if Year exists -->
+      {% else %}
+      <tr>
+        <td>{{ attribute }}:</td>
+        <td>
+          <strong> {{ value }} </strong>
+        </td>
+      </tr>
+      {% endif %} {% endfor %}
     </table>
   </div>
 </div>

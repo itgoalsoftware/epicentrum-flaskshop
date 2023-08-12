@@ -13,7 +13,7 @@ from flaskshop.dashboard.forms import (
 from flaskshop.dashboard.utils import wrap_partial, item_del
 from flaskshop.dashboard.models import DashboardMenu, Setting
 from flaskshop.plugin.models import PluginRegistry
-from flaskshop.product.models import Category, Collection
+from flaskshop.product.models import Artist, Collection
 from flaskshop.public.models import MenuItem, Page
 
 
@@ -84,11 +84,13 @@ def site_menus_manage(id=None):
     else:
         menu = MenuItem()
         form = SiteMenuForm()
-    form.parent_id.choices = [(m.id, m.title) for m in MenuItem.first_level_items()]
+    form.parent_id.choices = [(m.id, m.title)
+                              for m in MenuItem.first_level_items()]
     form.parent_id.choices.insert(0, (0, "None"))
-    form.category_id.choices = [(c.id, c.title) for c in Category.query.all()]
-    form.category_id.choices.insert(0, (0, "None"))
-    form.collection_id.choices = [(c.id, c.title) for c in Collection.query.all()]
+    form.artist_id.choices = [(c.id, c.title) for c in Artist.query.all()]
+    form.artist_id.choices.insert(0, (0, "None"))
+    form.collection_id.choices = [(c.id, c.title)
+                                  for c in Collection.query.all()]
     form.collection_id.choices.insert(0, (0, "None"))
     form.page_id.choices = [(p.id, p.title) for p in Page.query.all()]
     form.page_id.choices.insert(0, (0, "None"))
@@ -201,7 +203,8 @@ def plugin_enable(id):
     plugin.enabled = True
     plugin.save()
     flash(
-        lazy_gettext("The plugin is enabled, Please restart flask-shop now!"), "success"
+        lazy_gettext(
+            "The plugin is enabled, Please restart flask-shop now!"), "success"
     )
     return redirect(url_for("dashboard.plugin_list"))
 
@@ -211,7 +214,8 @@ def plugin_disable(id):
     plugin.enabled = False
     plugin.save()
     flash(
-        lazy_gettext("The plugin is disabled, Please restart flask-shop now!"), "info"
+        lazy_gettext(
+            "The plugin is disabled, Please restart flask-shop now!"), "info"
     )
     return redirect(url_for("dashboard.plugin_list"))
 

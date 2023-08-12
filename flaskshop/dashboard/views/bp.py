@@ -21,9 +21,9 @@ from .product import (
     attributes,
     attributes_manage,
     attribute_del,
-    categories,
-    categories_manage,
-    category_del,
+    artists,
+    artists_manage,
+    artist_del,
     collections,
     collections_manage,
     collection_del,
@@ -121,15 +121,18 @@ def flaskshop_load_blueprints(app):
         "/site_setting/edit", view_func=site_setting, methods=["GET", "POST"]
     )
     bp.add_url_rule("/plugin", view_func=plugin_list)
-    bp.add_url_rule("/plugin/<id>/enable", view_func=plugin_enable, methods=["POST"])
-    bp.add_url_rule("/plugin/<id>/disable", view_func=plugin_disable, methods=["POST"])
+    bp.add_url_rule("/plugin/<id>/enable",
+                    view_func=plugin_enable, methods=["POST"])
+    bp.add_url_rule("/plugin/<id>/disable",
+                    view_func=plugin_disable, methods=["POST"])
     bp.add_url_rule("/config", view_func=config_index)
     bp.add_url_rule("/users", view_func=users)
     bp.add_url_rule("/users/<user_id>", view_func=user)
     bp.add_url_rule(
         "/users/<user_id>/edit", view_func=user_edit, methods=["GET", "POST"]
     )
-    bp.add_url_rule("/users/<int:id>/delete", view_func=user_del, methods=["DELETE"])
+    bp.add_url_rule("/users/<int:id>/delete",
+                    view_func=user_del, methods=["DELETE"])
     bp.add_url_rule(
         "/users/address/<id>/edit", view_func=address_edit, methods=["GET", "POST"]
     )
@@ -153,15 +156,15 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule(
         "/collections/<int:id>/delete", view_func=collection_del, methods=["DELETE"]
     )
-    bp.add_url_rule("/categories", view_func=categories)
+    bp.add_url_rule("/artists", view_func=artists)
     bp.add_url_rule(
-        "/categories/create", view_func=categories_manage, methods=["GET", "POST"]
+        "/artists/create", view_func=artists_manage, methods=["GET", "POST"]
     )
     bp.add_url_rule(
-        "/categories/<id>/edit", view_func=categories_manage, methods=["GET", "POST"]
+        "/artists/<id>/edit", view_func=artists_manage, methods=["GET", "POST"]
     )
     bp.add_url_rule(
-        "/categories/<int:id>/delete", view_func=category_del, methods=["DELETE"]
+        "/artists/<int:id>/delete", view_func=artist_del, methods=["DELETE"]
     )
     bp.add_url_rule("/product_types", view_func=product_types)
     bp.add_url_rule(
@@ -233,8 +236,11 @@ def flaskshop_load_blueprints(app):
         "/vouchers/<int:id>/delete", view_func=voucher_del, methods=["DELETE"]
     )
     bp.add_url_rule("/sales", view_func=sales)
-    bp.add_url_rule("/sales/create", view_func=sales_manage, methods=["GET", "POST"])
-    bp.add_url_rule("/sales/<id>/edit", view_func=sales_manage, methods=["GET", "POST"])
-    bp.add_url_rule("/sales/<int:id>/delete", view_func=sale_del, methods=["DELETE"])
+    bp.add_url_rule("/sales/create", view_func=sales_manage,
+                    methods=["GET", "POST"])
+    bp.add_url_rule("/sales/<id>/edit", view_func=sales_manage,
+                    methods=["GET", "POST"])
+    bp.add_url_rule("/sales/<int:id>/delete",
+                    view_func=sale_del, methods=["DELETE"])
 
     app.register_blueprint(bp, url_prefix="/dashboard")

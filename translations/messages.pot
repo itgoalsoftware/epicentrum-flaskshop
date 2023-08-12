@@ -350,10 +350,10 @@ msgstr ""
 #: ../flaskshop/dashboard/forms.py:62 ../flaskshop/dashboard/forms.py:143
 #: ../flaskshop/dashboard/forms.py:184 ../flaskshop/dashboard/forms.py:196
 #: ../flaskshop/dashboard/views/product.py:216
-#: ../flaskshop/templates/dashboard/product/category.html:15
+#: ../flaskshop/templates/dashboard/product/artist.html:15
 #: ../flaskshop/templates/dashboard/product/detail.html:56
 #: ../flaskshop/templates/dashboard/product/list.html:26
-msgid "Category"
+msgid "Artist"
 msgstr ""
 
 #: ../flaskshop/dashboard/forms.py:63
@@ -565,7 +565,7 @@ msgid "Limit"
 msgstr ""
 
 #: ../flaskshop/dashboard/forms.py:184
-msgid "when type is category, need to select"
+msgid "when type is artist, need to select"
 msgstr ""
 
 #: ../flaskshop/dashboard/forms.py:187 ../flaskshop/dashboard/forms.py:197
@@ -683,7 +683,7 @@ msgid "Product Collection"
 msgstr ""
 
 #: ../flaskshop/dashboard/views/product.py:113
-msgid "Product Category"
+msgid "Product Artist"
 msgstr ""
 
 #: ../flaskshop/dashboard/views/product.py:153
@@ -882,7 +882,7 @@ msgstr ""
 #: ../flaskshop/templates/dashboard/discount/voucher.html:14
 #: ../flaskshop/templates/dashboard/list.html:45
 #: ../flaskshop/templates/dashboard/product/attribute.html:14
-#: ../flaskshop/templates/dashboard/product/category.html:14
+#: ../flaskshop/templates/dashboard/product/artist.html:14
 #: ../flaskshop/templates/dashboard/product/collection.html:14
 #: ../flaskshop/templates/dashboard/product/detail.html:16
 #: ../flaskshop/templates/dashboard/product/detail.html:110
@@ -1085,7 +1085,7 @@ msgstr ""
 #: ../flaskshop/templates/dashboard/discount/voucher.html:14
 #: ../flaskshop/templates/dashboard/list.html:25
 #: ../flaskshop/templates/dashboard/product/attribute.html:14
-#: ../flaskshop/templates/dashboard/product/category.html:14
+#: ../flaskshop/templates/dashboard/product/artist.html:14
 #: ../flaskshop/templates/dashboard/product/collection.html:14
 #: ../flaskshop/templates/dashboard/product/detail.html:87
 #: ../flaskshop/templates/dashboard/product/list.html:45

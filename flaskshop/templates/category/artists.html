@@ -1,20 +1,22 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <div class="container my-4">
-    <div class="row">
-        {% for category, product_count in categories_with_product_count %}
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <a href="/products/category/{{category.title}}" class="text-decoration-none text-dark">{{ category.title }} ({{ product_count }}) </a>
-                    </h5>
-                    <p class="card-text">Artist</p>
-                </div>
-            </div>
+  <div class="row">
+    {% for artist, product_count in artists_with_product_count %}
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">
+            <a
+              href="/products/artist/{{artist.title}}"
+              class="text-decoration-none text-dark"
+              >{{ artist.title }} ({{ product_count }})
+            </a>
+          </h5>
+          <p class="card-text">Artist</p>
         </div>
-        {% endfor %}
+      </div>
     </div>
+    {% endfor %}
+  </div>
 </div>
 {% endblock content %}

@@ -15,11 +15,11 @@ from flaskshop.plugin.utils import template_hook
 from flaskshop.public.models import MenuItem
 
 
-def flash_errors(form, category="warning"):
+def flash_errors(form, artist="warning"):
     """Flash all errors for a form."""
     for field, errors in form.errors.items():
         for error in errors:
-            flash(f"{getattr(form, field).label.text} - {error}", category)
+            flash(f"{getattr(form, field).label.text} - {error}", artist)
 
 
 def log_slow_queries(app):
