@@ -229,6 +229,7 @@ class Artist(Model):
     title = Column(db.String(255), nullable=False)
     parent_id = Column(db.Integer(), default=0)
     background_img = Column(db.String(255))
+    biography = Column(db.Text())
 
     def __str__(self):
         return self.title

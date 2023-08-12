@@ -153,6 +153,7 @@ class ArtistForm(FlaskForm):
             FileSize(1024 * 1024 * 1024, message="It is too big!"),
         ],
     )
+    biography = TextAreaField(lazy_gettext("Biography"))
     submit = SubmitField(lazy_gettext("Submit"))
 
 

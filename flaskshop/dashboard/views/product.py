@@ -91,6 +91,7 @@ def artists():
         "title": lazy_gettext("Title"),
         "parent": lazy_gettext("Parent"),
         "created_at": lazy_gettext("Created At"),
+        "biography": lazy_gettext("Biography"),
     }
     context = {
         "title": lazy_gettext("Product Artist"),
