@@ -18,7 +18,27 @@
 
 {% block topcontent %}
     {% if object.background_img %}
-        <div class="row" id="product-list-image" style="background-image: url('{{ object.background_img_url }}')"></div>
+        <!-- <div class="row" id="product-list-image" style="background-image: url('{{ object.background_img_url }}')"></div> -->
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-2 col-md-2 col-12">
+                    <img src="{{ object.background_img_url }}" alt="ALECHINSKY, lithographie, gravure, estampe" class="border border-1 img-fluid">
+                </div>
+                <div class="col-lg-10 col-md-10 col-12">
+                    <div class="mt-2">
+                        <h1 class="fw-bold fs-4">{{ object.title.split(" ")[1] }}</h1>
+                        <span class="fs-6">
+                            <a href="#oeuvres">Oeuvres</a> | <a href="#bio">Biographie</a> | <a href="#texte">Texte référence</a> | <a href="#cat">Catalogue</a> | <a href="#citation">Verbatim</a> | <a href="#estampes_vendues">Oeuvres vendues</a> | <a href="#bibliographie">Bibliographie</a>
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="fs-6">
+                            <strong>{{ object.title }}<br>Here are the original signed prints (lithographs, etchings, aquatints or books) currently available for {{ object.title }}, click on an image to access the description of the print. Unless otherwise stated, all these prints by Pierre Alechinsky are original and signed.</strong>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endblock topcontent %}
 
@@ -47,9 +67,11 @@
                             <div>
                             <span>
                                 {% if now_sorted_by == 'title' %}
-                                    {% trans %}Sort by{% endtrans %}: <b>name</b>
+                                    {% trans %}Sort by{% endtrans %}: <b>title</b>
                                 {% elif now_sorted_by == 'basic_price' %}
                                     {% trans %}Sort by{% endtrans %}: <b>price</b>
+                                {% elif now_sorted_by == 'year' %}
+                                    {% trans %}Sort by{% endtrans %}: <b>year</b>
                                 {% endif %}
                             </span>
                                 <div class="sort-order-icon">
