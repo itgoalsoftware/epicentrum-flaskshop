@@ -13396,6 +13396,11 @@ a.link--clean:hover {
   }
 }
 
+.form-inline {
+  display: flex;
+  align-items: center;
+}
+
 .account h2, .account .h2 {
   text-align: center;
   text-transform: uppercase;

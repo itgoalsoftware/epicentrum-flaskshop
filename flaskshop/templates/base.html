@@ -72,21 +72,14 @@
         <div class="navbar__brand container-fluid d-block">
             <div class="container">
                 <div class="row no-gutters">
-                    <div class="col-6 col-md-4 navbar__logo">
+                    <div class="col-4 col-md-4 navbar__logo">
                         <a href="{{ url_for('public.home') }}">
                             <img src="{{ url_for('static', filename='img/logo-document.png') }}"></img>
                         </a>
                     </div>
-                    <div class="col-4 col-md-5 navbar__search static">
-                        <div class="d-md-none mobile-search-icon">
-                            <svg data-src="{{ url_for('static', filename='img/search.svg') }}" width="30"
-                                 height="30"></svg>
-                        </div>
+                    <div class="col-5 col-md-5 navbar__search static">
                         <form class="form-inline search-form" action="/search">
-                            <div class="mobile-close-search d-md-none">
-                                <svg data-src="{{ url_for('static', filename='img/close.svg') }}" width="30"
-                                     height="30"></svg>
-                            </div>
+                           
                             <input class="form-control" type="text" name="q" value="{{ request.args.get('q', '') }}"
                                    placeholder="Search for product" required>
                             <button class="btn btn-primary" type="submit">
