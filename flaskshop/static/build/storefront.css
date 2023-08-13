@@ -14121,6 +14121,7 @@ a.link--clean:hover {
   margin-bottom: 2rem;
 }
 .product-list img {
+  max-height: 220px;
   max-width: 100%;
 }
 .product-list-item-name {
