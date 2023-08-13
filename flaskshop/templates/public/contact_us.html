@@ -18,11 +18,17 @@
 
 {% block content %}
 
-
-
+  
 <div class="container mt-5">
+    <div class="row mb-5">
+        <div class="col-md-12 col-lg-6 content">
+            <h1 class="mb-3">Communication Matters</h1>
+            <p>We understand the pivotal role of communication. Every question you ask holds significant importance for us, and we are dedicated to responding thoroughly and thoughtfully. We will spare no effort to address your ingquiry with the utmost care.</p>
+        </div>
+    </div>
+
     <div class="row">
-        <div class="col-sm-6 col-md-5">
+        <div class="col-md-12 col-lg-5 text-center text-md-left d-inline-block mr-2 mb-5">
             <h4 class="uppercase font-weight-bold mb-3">Epicentrum Art Gallery</h4>
             <address>
                 Wielkanocna 2<br>
@@ -31,18 +37,31 @@
             </address>
             <hr>
             
-            <div class="contact-details">
-                <p class="d-block mb-1"><strong>Email:</strong> <a href="mailto:epicentrumartgallery@gmail.com">epicentrumgallery@gmail.com</a></p>
+            <div class="contact-details align-top mr-5">
+                <p class="d-block mb-1 mr-5"><strong>Email:</strong> <a href="mailto:epicentrumartgallery@gmail.com">epicentrumgallery@gmail.com</a></p>
                 <p class="d-block mb-1"><strong>Phone:</strong> +48 504 089 803</p>
+                <a href="https://wa.me/0048504098803" target="_blank">
+                    <img src="{{ url_for('static', filename='img/whatsapp_logo.png') }}"> Chat on WhatsApp
+                </a>
+                <a href="https://m.me/epicentrumartgallery" target="_blank">
+                    <img src="{{ url_for('static', filename='img/messenger_logo.png') }}"></img> Chat on Messenger
+                </a>
+            </div>
+            <div class="d-inline-block align-middle text-center qr">
+                <div class="">Whatsapp</div>
+                <img src="{{ url_for('static', filename='img/whatsapp_qr.jpg') }}" alt="WhatsApp Logo">
+            </div>
+            
+            <div class="d-inline-block align-middle text-center qr-r">
+                <div class="">Wechat</div>
+                <img src="{{ url_for('static', filename='img/wechat_qr.jpg') }}" alt="WeChat Logo"> 
             </div>
             <hr>
-            <p class="text-justify">Epicentrum Art Gallery values your privacy and ensures that any personal information you provide (such as name, location, email address) will remain confidential.</p>
+            <p class="text-justify-p">Epicentrum Art Gallery values your privacy and ensures that any personal information you provide (such as name, location, email address) will remain confidential.</p>
         </div>
-        
-
         {% include "public/_contact_form.html" %}
- 
     </div>
+    
     <div class="row">
         <div class="col-sm-12 col-md-12">
             <!-- Google Maps Embed Code -->

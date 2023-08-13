@@ -1,0 +1,44 @@
+.contact-details {
+    img {
+        height: 20px;
+        width: 20px;
+    }
+    
+    a {
+        display: block;
+        margin-right: 5px;
+    }
+    
+    @include media-breakpoint-up(xxl) {
+        display: inline-block;
+    }
+    
+}
+
+.text-justify-p{
+    text-align: justify !important;
+}
+
+.qr, .qr-r{
+    img {
+        height: 110px;
+        width: 110px;
+    }
+
+    @include media-breakpoint-down(xxl) {
+        margin-top: 5px;
+        margin-bottom: 15px;
+    }
+}
+
+.qr {
+    
+    @include media-breakpoint-up(xxl) {
+    margin-left: 15px;
+    }
+        
+    &-r{
+        margin-left: 15px;       
+    }
+}
+

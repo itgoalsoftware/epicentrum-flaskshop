@@ -18,10 +18,12 @@
 @import "components/typography";
 @import "components/variant-picker";
 @import "components/language-picker";
+@import "components/general";
 
 @import "layouts/account";
 @import "layouts/cart";
 @import "layouts/checkout";
+@import "layouts/_contact_details";
 @import "layouts/home";
 @import "layouts/login";
 @import "layouts/no-results";

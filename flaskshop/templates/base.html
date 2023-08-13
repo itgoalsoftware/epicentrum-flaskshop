@@ -3,7 +3,7 @@
 <html class="no-js">
 
 <head>
-    <title>{% block title %}{% trans %}flask store{% endtrans %}{% endblock %}</title>
+    <title>{% block title %}{% trans %}Epicentrum Art Gallery{% endtrans %}{% endblock %}</title>
     {% block meta %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +14,7 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <meta name="og:type" content="website">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
     {% endblock meta %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='build/storefront.css') }}">
     {% block stylesheet %}{% endblock stylesheet %}
