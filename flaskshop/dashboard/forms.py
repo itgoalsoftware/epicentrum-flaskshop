@@ -139,6 +139,7 @@ class CollectionForm(FlaskForm):
             FileSize(1024 * 1024 * 1024, message="It is too big!"),
         ],
     )
+    description = TextAreaField(lazy_gettext("Description"))
     submit = SubmitField(lazy_gettext("Submit"))
 
 

@@ -72,6 +72,7 @@ def collections():
         "id": lazy_gettext("ID"),
         "title": lazy_gettext("Title"),
         "created_at": lazy_gettext("Created At"),
+        "description": lazy_gettext("Description"),
     }
     context = {
         "title": lazy_gettext("Product Collection"),
@@ -114,6 +115,7 @@ def collections_manage(id=None):
     if form.validate_on_submit():
         collection.title = form.title.data
         image = form.bgimg_file.data
+        collection.description = form.description.data
         if image:
             collection.background_img = save_img_file(image)
         collection.save()

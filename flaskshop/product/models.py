@@ -136,20 +136,6 @@ class Product(Model):
             ProductImage.get_by_id(id).delete(commit=False)
         db.session.commit()
 
-    @classmethod
-    @cache_by_args(MC_KEY_ARTIST_PRODUCTS.format("{artist_id}", "{page}"))
-    def get_all_products(cls):
-        products = Product.query.all()
-
-        ctx, query = get_product_list_context(query, artist)
-        pagination = query.paginate(page, per_page=16)
-        del pagination.query
-        ctx.update(object=artist, pagination=pagination,
-                   products=pagination.items)
-        return ctx
-        ctx.update(products=products)
-        return ctx
-
     def update_attributes(self, attr_values):
         attr_entries = [str(item.id)
                         for item in self.product_type.product_attributes]
@@ -727,6 +713,7 @@ class ProductImage(Model):
 class Collection(Model):
     __tablename__ = "product_collection"
     title = Column(db.String(255), nullable=False)
+    description = Column(db.String(255))
     background_img = Column(db.String(255))
 
     def __str__(self):

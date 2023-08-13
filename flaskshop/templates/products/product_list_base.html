@@ -21,14 +21,18 @@
         <!-- <div class="row" id="product-list-image" style="background-image: url('{{ object.background_img_url }}')"></div> -->
         <div class="container">
             <div class="row">
-                <div class="col-lg-2 col-md-2 col-12">
-                    <img src="{{ object.background_img_url }}" alt="ALECHINSKY, lithographie, gravure, estampe" class="border border-1 img-fluid">
+                <div class="col-lg-2 col-md-2 col-12 mt-2">
+                    <img src="{{ object.background_img_url }}" alt="{{object.title}}, lithograph, etching" class="border border-1 img-fluid">
                 </div>
                 <div class="col-lg-10 col-md-10 col-12">
                     <div class="mt-2">
                         <span class="fs-6">
                             <strong>{{ object.title }}<br></strong>
-                            <p>{{object.biography | safe}}</p>
+                            {% if object.biography %}
+                                <p>{{ object.biography | safe }}</p>
+                            {% else %}
+                                <p>{{ object.description | safe }}</p>
+                            {% endif %}
                         </span>
                     </div>
                 </div>
