@@ -17,7 +17,7 @@ class MenuItem(Model):
     url_ = Column("url", db.String(255))
     artist_id = Column(db.Integer(), default=0)
     collection_id = Column(db.Integer(), default=0)
-    position = Column(db.Integer(), default=0)  # item在site中的位置, 1是top，2是bottom
+    position = Column(db.Integer(), default=0)  # 1-top，2-bottom
     page_id = Column(db.Integer(), default=0)
     parent_id = Column(db.Integer(), default=0)
 

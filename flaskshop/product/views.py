@@ -84,7 +84,7 @@ def flaskshop_load_blueprints(app):
     bp.add_url_rule("/api/variant_price/<int:id>", view_func=variant_price)
     bp.add_url_rule("/<int:id>/add",
                     view_func=product_add_to_cart, methods=["POST"])
-    bp.add_url_rule("/artist", view_func=show_all_artists)
+    bp.add_url_rule("/artists", view_func=show_all_artists)
     bp.add_url_rule("/artist/<int:id>", view_func=show_artist)
     bp.add_url_rule("/artist/<path:title>", view_func=show_artist_by_title)
     bp.add_url_rule("/collection/<int:id>", view_func=show_collection)
