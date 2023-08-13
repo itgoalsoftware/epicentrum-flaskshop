@@ -3,7 +3,7 @@ from flask_babel import lazy_gettext
 
 from flaskshop.dashboard.forms import (
     AttributeForm,
-    CategoryForm,
+    ArtistForm,
     CollectionForm,
     ProductCreateForm,
     ProductForm,
@@ -11,7 +11,7 @@ from flaskshop.dashboard.forms import (
     VariantForm,
 )
 from flaskshop.product.models import (
-    Category,
+    Artist,
     Collection,
     Product,
     ProductAttribute,
@@ -48,7 +48,8 @@ def attributes_manage(id=None):
     else:
         attr = ProductAttribute()
         form = AttributeForm()
-    form.product_types_ids.choices = [(p.id, p.title) for p in ProductType.query.all()]
+    form.product_types_ids.choices = [
+        (p.id, p.title) for p in ProductType.query.all()]
     if form.validate_on_submit():
         attr.title = form.title.data
         attr.save()
@@ -71,6 +72,7 @@ def collections():
         "id": lazy_gettext("ID"),
         "title": lazy_gettext("Title"),
         "created_at": lazy_gettext("Created At"),
+        "description": lazy_gettext("Description"),
     }
     context = {
         "title": lazy_gettext("Product Collection"),
@@ -82,21 +84,22 @@ def collections():
     return render_template("dashboard/general_list.html", **context)
 
 
-def categories():
+def artists():
     page = request.args.get("page", type=int, default=1)
-    pagination = Category.query.paginate(page, 10)
+    pagination = Artist.query.paginate(page, 10)
     props = {
         "id": lazy_gettext("ID"),
         "title": lazy_gettext("Title"),
         "parent": lazy_gettext("Parent"),
         "created_at": lazy_gettext("Created At"),
+        "biography": lazy_gettext("Biography"),
     }
     context = {
-        "title": lazy_gettext("Product Category"),
+        "title": lazy_gettext("Product Artist"),
         "items": pagination.items,
         "props": props,
         "pagination": pagination,
-        "identity": "categories",
+        "identity": "artists",
     }
     return render_template("dashboard/general_list.html", **context)
 
@@ -112,6 +115,7 @@ def collections_manage(id=None):
     if form.validate_on_submit():
         collection.title = form.title.data
         image = form.bgimg_file.data
+        collection.description = form.description.data
         if image:
             collection.background_img = save_img_file(image)
         collection.save()
@@ -124,27 +128,28 @@ def collections_manage(id=None):
 collection_del = wrap_partial(item_del, Collection)
 
 
-def categories_manage(id=None):
+def artists_manage(id=None):
     if id:
-        category = Category.get_by_id(id)
-        form = CategoryForm(obj=category)
+        artist = Artist.get_by_id(id)
+        form = ArtistForm(obj=artist)
     else:
-        category = Category()
-        form = CategoryForm()
-    form.parent_id.choices = [(c.id, c.title) for c in Category.first_level_items()]
+        artist = Artist()
+        form = ArtistForm()
+    form.parent_id.choices = [(c.id, c.title)
+                              for c in Artist.first_level_items()]
     form.parent_id.choices.insert(0, (0, "None"))
     if form.validate_on_submit():
-        form.populate_obj(category)
+        form.populate_obj(artist)
         image = form.bgimg_file.data
         if image:
-            category.background_img = save_img_file(image)
-        category.save()
-        flash(lazy_gettext("Category saved."), "success")
-        return redirect(url_for("dashboard.categories"))
-    return render_template("product/category.html", form=form)
+            artist.background_img = save_img_file(image)
+        artist.save()
+        flash(lazy_gettext("Artist saved."), "success")
+        return redirect(url_for("dashboard.artists"))
+    return render_template("product/artist.html", form=form)
 
 
-category_del = wrap_partial(item_del, Category)
+artist_del = wrap_partial(item_del, Artist)
 
 
 def product_types():
@@ -206,9 +211,9 @@ def products():
     on_sale = request.args.get("sale", type=int)
     if on_sale is not None:
         query = query.filter_by(on_sale=on_sale)
-    category = request.args.get("category", type=int)
-    if category:
-        query = query.filter_by(category_id=category)
+    artist = request.args.get("artist", type=int)
+    if artist:
+        query = query.filter_by(artist_id=artist)
     title = request.args.get("title", type=str)
     if title:
         query = query.filter(Product.title.like(f"%{title}%"))
@@ -226,13 +231,13 @@ def products():
         "on_sale_human": lazy_gettext("On Sale"),
         "sold_count": lazy_gettext("Sold Count"),
         "price_human": lazy_gettext("Price"),
-        "category": lazy_gettext("Category"),
+        "artist": lazy_gettext("Artist"),
     }
     context = {
         "items": pagination.items,
         "props": props,
         "pagination": pagination,
-        "categories": Category.query.all(),
+        "artists": Artist.query.all(),
     }
     return render_template("product/list.html", **context)
 
@@ -252,7 +257,7 @@ def product_manage(id=None):
         product_type_id = request.args.get("product_type_id", 1, int)
         product_type = ProductType.get_by_id(product_type_id)
         product = Product(product_type_id=product_type_id)
-    form.category_id.choices = [(c.id, c.title) for c in Category.query.all()]
+    form.artist_id.choices = [(c.id, c.title) for c in Artist.query.all()]
     if form.validate_on_submit():
         product.update_images(form.images.data)
         product.update_attributes(form.attributes.data)
@@ -280,7 +285,8 @@ product_del = wrap_partial(item_del, Product)
 
 def product_create_step1():
     form = ProductCreateForm()
-    form.product_type_id.choices = [(p.id, p.title) for p in ProductType.query.all()]
+    form.product_type_id.choices = [(p.id, p.title)
+                                    for p in ProductType.query.all()]
     if form.validate_on_submit():
         return redirect(
             url_for(

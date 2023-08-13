@@ -6,7 +6,7 @@ from decimal import Decimal
 from flaskshop.constant import DiscountValueTypeKinds, VoucherTypeKinds
 from flaskshop.corelib.mc import rdb
 from flaskshop.database import Column, Model, db
-from flaskshop.product.models import MC_KEY_PRODUCT_DISCOUNT_PRICE, Category, Product
+from flaskshop.product.models import MC_KEY_PRODUCT_DISCOUNT_PRICE, Artist, Product
 
 MC_KEY_SALE_PRODUCT_IDS = "discount:sale:{}:product_ids"
 
@@ -23,7 +23,7 @@ class Voucher(Model):
     discount_value_type = Column(db.Integer())
     discount_value = Column(db.DECIMAL(10, 2))
     limit = Column(db.DECIMAL(10, 2))
-    category_id = Column(db.Integer())
+    artist_id = Column(db.Integer())
     product_id = Column(db.Integer())
 
     def __str__(self):
@@ -58,7 +58,8 @@ class Voucher(Model):
 
     def check_available(self, cart=None):
         if self.start_date and self.start_date > datetime.date(datetime.now()):
-            raise Exception("The voucher code can not use now, please retry later")
+            raise Exception(
+                "The voucher code can not use now, please retry later")
         if self.end_date and self.end_date < datetime.date(datetime.now()):
             raise Exception("The voucher code has expired")
         if self.usage_limit and self.usage_limit - self.used < 0:
@@ -83,20 +84,21 @@ class Voucher(Model):
             product = Product.get_by_id(self.product_id)
             # got any product in cart, should be zero
             if cart.get_product_price(self.product_id) == 0:
-                raise Exception(f"This Voucher Code should be used for {product.title}")
+                raise Exception(
+                    f"This Voucher Code should be used for {product.title}")
             if self.limit and cart.get_product_price(self.product_id) < self.limit:
                 raise Exception(
                     f"The product {product.title} total amount is not enough({self.limit}) to use this voucher code"
                 )
-        elif self.type_ == VoucherTypeKinds.category.value:
-            category = Category.get_by_id(self.category_id)
-            if cart.get_category_price(self.category_id) == 0:
+        elif self.type_ == VoucherTypeKinds.artist.value:
+            artist = Artist.get_by_id(self.artist_id)
+            if cart.get_artist_price(self.artist_id) == 0:
                 raise Exception(
-                    f"This Voucher Code should be used for {category.title}"
+                    f"This Voucher Code should be used for {artist.title}"
                 )
-            if self.limit and cart.get_category_price(self.category_id) < self.limit:
+            if self.limit and cart.get_artist_price(self.artist_id) < self.limit:
                 raise Exception(
-                    f"The category {category.title} total amount is not enough({self.limit}) to use this voucher code"
+                    f"The artist {artist.title} total amount is not enough({self.limit}) to use this voucher code"
                 )
 
     @classmethod
@@ -110,9 +112,9 @@ class Voucher(Model):
             return self.get_voucher_from_price(cart.shipping_method_price)
         elif self.type_ == VoucherTypeKinds.product.value:
             return self.get_voucher_from_price(cart.get_product_price(self.product_id))
-        elif self.type_ == VoucherTypeKinds.category.value:
+        elif self.type_ == VoucherTypeKinds.artist.value:
             return self.get_voucher_from_price(
-                cart.get_category_price(self.category_id)
+                cart.get_artist_price(self.artist_id)
             )
         return 0
 
@@ -139,14 +141,15 @@ class Sale(Model):
 
     @classmethod
     def get_discounted_price(cls, product):
-        sale_product = SaleProduct.query.filter_by(product_id=product.id).first()
+        sale_product = SaleProduct.query.filter_by(
+            product_id=product.id).first()
         if sale_product:
             sale = Sale.get_by_id(sale_product.sale_id)
         else:
-            sale_category = SaleCategory.query.filter_by(
-                category_id=product.category.id
+            sale_artist = SaleArtist.query.filter_by(
+                artist_id=product.artist.id
             ).first()
-            sale = Sale.get_by_id(sale_category.sale_id) if sale_category else None
+            sale = Sale.get_by_id(sale_artist.sale_id) if sale_artist else None
         if sale is None:
             return 0
         if sale.discount_value_type == DiscountValueTypeKinds.fixed.value:
@@ -156,10 +159,10 @@ class Sale(Model):
             return Decimal(price).quantize(Decimal("0.00"))
 
     @property
-    def categories_ids(self):
+    def artists_ids(self):
         at_ids = (
-            SaleCategory.query.with_entities(SaleCategory.category_id)
-            .filter(SaleCategory.sale_id == self.id)
+            SaleArtist.query.with_entities(SaleArtist.artist_id)
+            .filter(SaleArtist.sale_id == self.id)
             .all()
         )
         return [id[0] for id in at_ids]
@@ -179,22 +182,22 @@ class Sale(Model):
             Product.id.in_(id for id in self.products_ids)
         ).all()
 
-    def update_categories(self, category_ids):
+    def update_artists(self, artist_ids):
         origin_ids = (
-            SaleCategory.query.with_entities(SaleCategory.category_id)
+            SaleArtist.query.with_entities(SaleArtist.artist_id)
             .filter_by(sale_id=self.id)
             .all()
         )
         origin_ids = set(i for i, in origin_ids)
-        new_attrs = set(int(i) for i in category_ids)
+        new_attrs = set(int(i) for i in artist_ids)
         need_del = origin_ids - new_attrs
         need_add = new_attrs - origin_ids
         for id in need_del:
-            SaleCategory.query.filter_by(
-                sale_id=self.id, category_id=id
+            SaleArtist.query.filter_by(
+                sale_id=self.id, artist_id=id
             ).first().delete(commit=False)
         for id in need_add:
-            new = SaleCategory(sale_id=self.id, category_id=id)
+            new = SaleArtist(sale_id=self.id, artist_id=id)
             db.session.add(new)
         db.session.commit()
 
@@ -223,7 +226,7 @@ class Sale(Model):
         # for (id,) in target.products_ids:
         #     rdb.delete(MC_KEY_PRODUCT_DISCOUNT_PRICE.format(id))
 
-        # need to process so many states, category update etc.. so delete all
+        # need to process so many states, artist update etc.. so delete all
         keys = rdb.keys(MC_KEY_PRODUCT_DISCOUNT_PRICE.format("*"))
         for key in keys:
             rdb.delete(key)
@@ -244,10 +247,10 @@ class Sale(Model):
         target.clear_mc(target)
 
 
-class SaleCategory(Model):
-    __tablename__ = "discount_sale_category"
+class SaleArtist(Model):
+    __tablename__ = "discount_sale_artist"
     sale_id = Column(db.Integer())
-    category_id = Column(db.Integer())
+    artist_id = Column(db.Integer())
 
 
 class SaleProduct(Model):

@@ -15,9 +15,9 @@ class MenuItem(Model):
     title = Column(db.String(255), nullable=False)
     order = Column(db.Integer(), default=0)
     url_ = Column("url", db.String(255))
-    category_id = Column(db.Integer(), default=0)
+    artist_id = Column(db.Integer(), default=0)
     collection_id = Column(db.Integer(), default=0)
-    position = Column(db.Integer(), default=0)  # item在site中的位置, 1是top，2是bottom
+    position = Column(db.Integer(), default=0)  # 1-top，2-bottom
     page_id = Column(db.Integer(), default=0)
     parent_id = Column(db.Integer(), default=0)
 
@@ -32,15 +32,16 @@ class MenuItem(Model):
     @cache(MC_KEY_MENU_ITEM_CHILDREN.format("{self.id}"))
     def children(self):
         return (
-            MenuItem.query.filter(MenuItem.parent_id == self.id).order_by("order").all()
+            MenuItem.query.filter(MenuItem.parent_id ==
+                                  self.id).order_by("order").all()
         )
 
     @property
     def linked_object_url(self):
         if self.page_id:
             return Page.get_by_id(self.page_id).url
-        elif self.category_id:
-            return url_for("product.show_category", id=self.category_id)
+        elif self.artist_id:
+            return url_for("product.show_artist", id=self.artist_id)
         elif self.collection_id:
             return url_for("product.show_collection", id=self.collection_id)
 

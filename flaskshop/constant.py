@@ -2,7 +2,8 @@ import enum
 
 from flask_babel import lazy_gettext
 
-ShipStatusKinds = enum.Enum(value="ShipStatus", names="pending delivered received")
+ShipStatusKinds = enum.Enum(
+    value="ShipStatus", names="pending delivered received")
 PaymentStatusKinds = enum.Enum(
     value="PaymentStatus", names="waiting preauth confirmed rejected"
 )
@@ -13,9 +14,10 @@ OrderEvents = enum.Enum(
     value="OrderEvents",
     names="draft_created payment_captured payment_failed order_canceled order_delivered order_completed",
 )
-DiscountValueTypeKinds = enum.Enum(value="DiscountValueType", names="fixed percent")
+DiscountValueTypeKinds = enum.Enum(
+    value="DiscountValueType", names="fixed percent")
 VoucherTypeKinds = enum.Enum(
-    value="VoucherType", names="product category shipping value"
+    value="VoucherType", names="product artist shipping value"
 )
 
 SettingValueType = enum.Enum(

@@ -104,7 +104,7 @@
     }
   }
 
-  &__categories {
+  &__artists {
     padding: $global-padding 0 0;
 
     @include media-breakpoint-down(sm) {
@@ -132,7 +132,7 @@
         a {
           font-size: 1.2rem;
           color: $body-color;
-          padding-right: $global-padding*0.5;
+          padding-right: $global-padding * 0.5;
         }
       }
     }
@@ -176,7 +176,7 @@
     width: 10px;
     height: 10px;
     background: $blue;
-    margin-left: $global-margin*0.5;
+    margin-left: $global-margin * 0.5;
     border-radius: 50%;
   }
 
@@ -206,7 +206,7 @@
 
     svg {
       vertical-align: baseline;
-      margin-left: $global-padding*0.5;
+      margin-left: $global-padding * 0.5;
       height: 10px;
       width: 15px;
     }
@@ -224,7 +224,7 @@
 
     li {
       text-align: left;
-      padding-top: $global-padding*0.5;
+      padding-top: $global-padding * 0.5;
       overflow: hidden;
       border-bottom: solid 1px $gray;
       padding-bottom: $global-padding;

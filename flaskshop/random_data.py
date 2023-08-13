@@ -21,7 +21,7 @@ from flaskshop.discount.models import Sale, SaleProduct, Voucher
 from flaskshop.order.models import Order, OrderLine, OrderPayment
 from flaskshop.product.models import (
     AttributeChoiceValue,
-    Category,
+    Artist,
     Collection,
     Product,
     ProductAttribute,
@@ -48,11 +48,11 @@ class SaleorProvider(BaseProvider):
 
 fake.add_provider(SaleorProvider)
 
-GROCERIES_CATEGORY = {"name": "Groceries", "image_name": "groceries.jpg"}
+GROCERIES_ARTIST = {"name": "Groceries", "image_name": "groceries.jpg"}
 
 DEFAULT_SCHEMA = {
     "T-Shirt": {
-        "category": {"name": "Apparel", "image_name": "apparel.jpg"},
+        "artist": {"name": "Apparel", "image_name": "apparel.jpg"},
         "product_attributes": {
             "Color": ["Blue", "White"],
             "Collar": ["Round", "V-Neck", "Polo"],
@@ -63,17 +63,17 @@ DEFAULT_SCHEMA = {
         "is_shipping_required": True,
     },
     "Mugs": {
-        "category": {"name": "Accessories", "image_name": "accessories.jpg"},
+        "artist": {"name": "Accessories", "image_name": "accessories.jpg"},
         "product_attributes": {"Brand": ["Saleor"]},
         "variant_attributes": {},
         "images_dir": "mugs/",
         "is_shipping_required": True,
     },
     "Coffee": {
-        "category": {
+        "artist": {
             "name": "Coffees",
             "image_name": "coffees.jpg",
-            "parent": GROCERIES_CATEGORY,
+            "parent": GROCERIES_ARTIST,
         },
         "product_attributes": {
             "Coffee Genre": ["Arabica", "Robusta"],
@@ -85,10 +85,10 @@ DEFAULT_SCHEMA = {
         "is_shipping_required": True,
     },
     "Candy": {
-        "category": {
+        "artist": {
             "name": "Candies",
             "image_name": "candies.jpg",
-            "parent": GROCERIES_CATEGORY,
+            "parent": GROCERIES_ARTIST,
         },
         "product_attributes": {"Flavor": ["Sour", "Sweet"], "Brand": ["Saleor"]},
         "variant_attributes": {"Candy Box Size": ["100g", "250g", "500g"]},
@@ -96,7 +96,7 @@ DEFAULT_SCHEMA = {
         "is_shipping_required": True,
     },
     "E-books": {
-        "category": {"name": "Books", "image_name": "books.jpg"},
+        "artist": {"name": "Books", "image_name": "books.jpg"},
         "product_attributes": {
             "Author": ["John Doe", "Milionare Pirate"],
             "Publisher": ["Mirumee Press", "Saleor Publishing"],
@@ -107,7 +107,7 @@ DEFAULT_SCHEMA = {
         "is_shipping_required": False,
     },
     "Books": {
-        "category": {"name": "Books", "image_name": "books.jpg"},
+        "artist": {"name": "Books", "image_name": "books.jpg"},
         "product_attributes": {
             "Author": ["John Doe", "Milionare Pirate"],
             "Publisher": ["Mirumee Press", "Saleor Publishing"],
@@ -130,7 +130,7 @@ DASHBOARD_MENUS = [
     {"title": "DISCOUNTS", "icon_cls": "fa-gratipay"},
     {"title": "CONFIGURATION", "endpoint": "config_index", "icon_cls": "fa-cog"},
     {"title": "Products", "endpoint": "products", "parent_id": 1},
-    {"title": "Categories", "endpoint": "categories", "parent_id": 1},
+    {"title": "Artists", "endpoint": "artists", "parent_id": 1},
     {"title": "Collections", "endpoint": "collections", "parent_id": 1},
     {"title": "Sales", "endpoint": "sales", "parent_id": 4},
     {"title": "Vouchers", "endpoint": "vouchers", "parent_id": 4},
@@ -154,7 +154,8 @@ def get_variant_combinations(product):
     }
     all_combinations = itertools.product(*variant_attr_map.values())
     return [
-        {str(attr_value.attribute.id): str(attr_value.id) for attr_value in combination}
+        {str(attr_value.attribute.id): str(attr_value.id)
+         for attr_value in combination}
         for combination in all_combinations
     ]
 
@@ -212,7 +213,8 @@ def create_products_by_schema(
 def create_product_types_by_schema(root_schema):
     results = []
     for product_type_name, schema in root_schema.items():
-        product_type = create_product_type_with_attributes(product_type_name, schema)
+        product_type = create_product_type_with_attributes(
+            product_type_name, schema)
         results.append((product_type, schema))
     return results
 
@@ -225,8 +227,10 @@ def create_product_type_with_attributes(name, schema):
     product_type = ProductType.get_or_create(
         title=name, is_shipping_required=is_shipping_required
     )[0]
-    product_attributes = create_attributes_and_values(product_attributes_schema)
-    variant_attributes = create_attributes_and_values(variant_attributes_schema)
+    product_attributes = create_attributes_and_values(
+        product_attributes_schema)
+    variant_attributes = create_attributes_and_values(
+        variant_attributes_schema)
     for attr in product_attributes:
         ProductTypeAttributes.get_or_create(
             product_type_id=product_type.id, product_attribute_id=attr.id
@@ -254,20 +258,23 @@ def create_attributes_and_values(attribute_data):
 def create_products_by_type(
     product_type, schema, placeholder_dir, how_many=10, create_images=True, stdout=None
 ):
-    category = get_or_create_category(schema["category"], placeholder_dir)
+    artist = get_or_create_artist(schema["artist"], placeholder_dir)
 
     for dummy in range(how_many):
         product = create_product(
-            product_type_id=product_type.id, category_id=category.id
+            product_type_id=product_type.id, artist_id=artist.id
         )
         set_product_attributes(product, product_type)
         if create_images:
             type_placeholders = placeholder_dir / schema["images_dir"]
-            create_product_images(product, random.randrange(1, 5), type_placeholders)
+            create_product_images(
+                product, random.randrange(1, 5), type_placeholders)
         variant_combinations = get_variant_combinations(product)
 
-        prices = get_price_override(schema, len(variant_combinations), product.price)
-        variants_with_prices = itertools.zip_longest(variant_combinations, prices)
+        prices = get_price_override(schema, len(
+            variant_combinations), product.price)
+        variants_with_prices = itertools.zip_longest(
+            variant_combinations, prices)
 
         for i, variant_price in enumerate(variants_with_prices, start=1337):
             attr_combination, price = variant_price
@@ -283,21 +290,21 @@ def create_products_by_type(
 
 
 # step6
-def get_or_create_category(category_schema, placeholder_dir):
-    if "parent" in category_schema:
-        parent_id = get_or_create_category(
-            category_schema["parent"], placeholder_dir
+def get_or_create_artist(artist_schema, placeholder_dir):
+    if "parent" in artist_schema:
+        parent_id = get_or_create_artist(
+            artist_schema["parent"], placeholder_dir
         ).id
     else:
         parent_id = 0
-    category_name = category_schema["name"]
-    image_name = category_schema["image_name"]
+    artist_name = artist_schema["name"]
+    image_name = artist_schema["image_name"]
     image_path = placeholder_dir / "products-list" / image_name
     defaults = {"background_img": image_path.as_posix()}
-    category, _ = Category.get_or_create(
-        title=category_name, parent_id=parent_id, **defaults
+    artist, _ = Artist.get_or_create(
+        title=artist_name, parent_id=parent_id, **defaults
     )
-    return category
+    return artist
 
 
 # step7
@@ -363,7 +370,8 @@ def create_fake_collection(placeholder_dir, collection_data):
     )[0]
     products = Product.query.limit(4)
     for product in products:
-        ProductCollection.create(product_id=product.id, collection_id=collection.id)
+        ProductCollection.create(
+            product_id=product.id, collection_id=collection.id)
     return collection
 
 
@@ -423,7 +431,8 @@ def create_admin():
     create_fake_address(user.id)
     UserRole.create(user_id=user.id, role_id=4)
     yield f"Admin {user.username} created"
-    user = User.create(username="op", email="op@163.com", password="op", is_active=True)
+    user = User.create(username="op", email="op@163.com",
+                       password="op", is_active=True)
     UserRole.create(user_id=user.id, role_id=3)
     yield f"Admin {user.username} created"
     user = User.create(
@@ -462,10 +471,10 @@ def create_page():
 # step19
 def create_menus():
     yield "Created navbar menu"
-    categories = Category.query.all()
-    for category in categories:
-        if not category.parent_id:
-            for msg in generate_menu_items(category, menu_id=1):
+    artists = Artist.query.all()
+    for artist in artists:
+        if not artist.parent_id:
+            for msg in generate_menu_items(artist, menu_id=1):
                 yield msg
 
     yield "Created footer menu"
@@ -479,23 +488,25 @@ def create_menus():
     item, _ = MenuItem.get_or_create(title="Saleor", position=2)
     page = Page.query.first()
     if page:
-        MenuItem.get_or_create(title=page.title, page_id=page.id, parent_id=item.id)
-    MenuItem.get_or_create(title="Style guide", url_="/style", parent_id=item.id)
+        MenuItem.get_or_create(
+            title=page.title, page_id=page.id, parent_id=item.id)
+    MenuItem.get_or_create(title="Style guide",
+                           url_="/style", parent_id=item.id)
 
 
 # step20
-def generate_menu_items(category: Category, menu_id=None, parent_id=None):
+def generate_menu_items(artist: Artist, menu_id=None, parent_id=None):
     menu_item, created = MenuItem.get_or_create(
-        title=category.title,
-        category_id=category.id,
+        title=artist.title,
+        artist_id=artist.id,
         position=menu_id,
         parent_id=parent_id,
     )
 
     if created:
-        yield f"Created menu item for category {category}"
+        yield f"Created menu item for artist {artist}"
 
-    for child in category.children:
+    for child in artist.children:
         for msg in generate_menu_items(child, parent_id=menu_item.id):
             yield f"\t{msg}"
 

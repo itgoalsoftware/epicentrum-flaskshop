@@ -68,7 +68,7 @@ class SiteMenuForm(FlaskForm):
         ],
         default=0,
     )
-    category_id = SelectField(lazy_gettext("Category"))
+    artist_id = SelectField(lazy_gettext("Artist"))
     collection_id = SelectField(lazy_gettext("Collection"))
     page_id = SelectField(lazy_gettext("Page"))
     submit = SubmitField(lazy_gettext("Submit"))
@@ -86,13 +86,15 @@ class SitePageForm(FlaskForm):
 
 
 class SiteConfigForm(FlaskForm):
-    header_text = StringField(lazy_gettext("Header"), validators=[DataRequired()])
+    header_text = StringField(lazy_gettext(
+        "Header"), validators=[DataRequired()])
     description = TextAreaField(lazy_gettext("Description"))
     submit = SubmitField(lazy_gettext("Submit"))
 
 
 class UserForm(FlaskForm):
-    username = StringField(lazy_gettext("User Name"), validators=[DataRequired()])
+    username = StringField(lazy_gettext("User Name"),
+                           validators=[DataRequired()])
     email = StringField(lazy_gettext("E-mail"), validators=[DataRequired()])
     password = PasswordField(lazy_gettext("Password"))
     is_active = BooleanField(lazy_gettext("Is Active"))
@@ -137,10 +139,11 @@ class CollectionForm(FlaskForm):
             FileSize(1024 * 1024 * 1024, message="It is too big!"),
         ],
     )
+    description = TextAreaField(lazy_gettext("Description"))
     submit = SubmitField(lazy_gettext("Submit"))
 
 
-class CategoryForm(FlaskForm):
+class ArtistForm(FlaskForm):
     title = StringField(lazy_gettext("Title"), validators=[DataRequired()])
     parent_id = SelectField(lazy_gettext("Parent"), coerce=int, default=0)
     background_img = StringField(lazy_gettext("Current Image"))
@@ -151,6 +154,7 @@ class CategoryForm(FlaskForm):
             FileSize(1024 * 1024 * 1024, message="It is too big!"),
         ],
     )
+    biography = TextAreaField(lazy_gettext("Biography"))
     submit = SubmitField(lazy_gettext("Submit"))
 
 
@@ -160,7 +164,8 @@ class ProductTypeForm(FlaskForm):
     is_shipping_required = BooleanField(
         lazy_gettext("Is shipping required"), default=True
     )
-    product_attributes_ids = SelectMultipleField(lazy_gettext("Product atributes"))
+    product_attributes_ids = SelectMultipleField(
+        lazy_gettext("Product atributes"))
     variant_attr_id = SelectField(lazy_gettext("Variant Attributes"))
     submit = SubmitField(lazy_gettext("Submit"))
 
@@ -173,7 +178,7 @@ class ProductForm(FlaskForm):
     rating = FloatField(lazy_gettext("Rating"), default=0)
     sold_count = IntegerField(lazy_gettext("Sold Count"), default=0)
     review_count = IntegerField(lazy_gettext("Review Count"), default=0)
-    category_id = SelectField(lazy_gettext("Category"))
+    artist_id = SelectField(lazy_gettext("Artist"))
     description = TextAreaField(lazy_gettext("Description"))
     images = FieldList(StringField(lazy_gettext("Images")))
     new_images = MultipleFileField(
@@ -189,7 +194,8 @@ class ProductForm(FlaskForm):
 
 
 class ProductCreateForm(FlaskForm):
-    product_type_id = SelectField(lazy_gettext("Choose A Product Type"), default=1)
+    product_type_id = SelectField(
+        lazy_gettext("Choose A Product Type"), default=1)
     submit = SubmitField(lazy_gettext("Next"))
 
 
@@ -227,12 +233,13 @@ class VoucherForm(FlaskForm):
     used = IntegerField(lazy_gettext("Used"), default=0)
     start_date = DateField(lazy_gettext("Start At"))
     end_date = DateField(lazy_gettext("End At"))
-    discount_value_type = SelectField(lazy_gettext("Discount value type"), default=1)
+    discount_value_type = SelectField(
+        lazy_gettext("Discount value type"), default=1)
     discount_value = DecimalField(lazy_gettext("Discount value"), default=0.00)
     limit = IntegerField(lazy_gettext("Limit"), validators=[optional()])
-    category_id = SelectField(
-        lazy_gettext("Category"),
-        description=lazy_gettext("when type is category, need to select"),
+    artist_id = SelectField(
+        lazy_gettext("Artist"),
+        description=lazy_gettext("when type is artist, need to select"),
     )
     product_id = SelectField(
         lazy_gettext("Product"),
@@ -243,9 +250,10 @@ class VoucherForm(FlaskForm):
 
 class SaleForm(FlaskForm):
     title = StringField(lazy_gettext("Title"), validators=[DataRequired()])
-    discount_value_type = SelectField(lazy_gettext("Discount value type"), default=1)
+    discount_value_type = SelectField(
+        lazy_gettext("Discount value type"), default=1)
     discount_value = DecimalField(lazy_gettext("Discount value"), default=0.00)
-    categories_ids = SelectMultipleField(lazy_gettext("Category"), coerce=int)
+    artists_ids = SelectMultipleField(lazy_gettext("Artist"), coerce=int)
     products_ids = SelectMultipleField(lazy_gettext("Product"))
     submit = SubmitField(lazy_gettext("Submit"))
 
@@ -270,11 +278,13 @@ def generate_settings_form(settings):
         if setting.extra:
             if "min" in setting.extra:
                 # Min number validator
-                field_validators.append(validator_class(min=setting.extra["min"]))
+                field_validators.append(
+                    validator_class(min=setting.extra["min"]))
 
             if "max" in setting.extra:
                 # Max number validator
-                field_validators.append(validator_class(max=setting.extra["max"]))
+                field_validators.append(
+                    validator_class(max=setting.extra["max"]))
 
         # Generate the fields based on value_type
         # IntegerField

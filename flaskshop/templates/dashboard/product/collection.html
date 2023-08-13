@@ -18,6 +18,7 @@
                         <div class="card-body">
                             {{ form.hidden_tag() }}
                             {{ render_field(form.title) }}
+                            {{ render_field(form.description) }}
                             {{ render_field(form.products_ids) }}
                             {{ macros.render_img(form.background_img) }}
                             {{ render_field(form.bgimg_file) }}

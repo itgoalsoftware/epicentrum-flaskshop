@@ -12,13 +12,14 @@
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">{% if 'edit' in request.path %}{% trans %}Edit{% endtrans %}{% else %}{% trans %}Create{% endtrans %}{% endif %}
-                            {% trans %}Category{% endtrans %}</h3>
+                            {% trans %}Artist{% endtrans %}</h3>
                     </div>
                     <form method="POST" action="" enctype="multipart/form-data">
                         <div class="card-body">
                             {{ form.hidden_tag() }}
                             {{ render_field(form.title) }}
                             {{ render_field(form.parent_id) }}
+                            {{ render_field(form.biography) }}
                             {{ macros.render_img(form.background_img) }}
                             {{ render_field(form.bgimg_file) }}
                             {{ render_field(form.submit) }}

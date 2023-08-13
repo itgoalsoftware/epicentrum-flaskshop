@@ -5,7 +5,7 @@ from flaskshop.constant import DiscountValueTypeKinds, VoucherTypeKinds
 from flaskshop.dashboard.forms import SaleForm, VoucherForm
 from flaskshop.dashboard.utils import wrap_partial, item_del
 from flaskshop.discount.models import Sale, Voucher
-from flaskshop.product.models import Category, Product
+from flaskshop.product.models import Artist, Product
 
 
 def vouchers():
@@ -39,7 +39,7 @@ def vouchers_manage(id=None):
         form = VoucherForm()
 
     form.product_id.choices = [(p.id, p.title) for p in Product.query.all()]
-    form.category_id.choices = [(c.id, c.title) for c in Category.query.all()]
+    form.artist_id.choices = [(c.id, c.title) for c in Artist.query.all()]
     form.discount_value_type.choices = [
         (k.value, k.name) for k in DiscountValueTypeKinds
     ]
@@ -86,20 +86,20 @@ def sales_manage(id=None):
         form = SaleForm()
 
     form.products_ids.choices = [(p.id, p.title) for p in Product.query.all()]
-    form.categories_ids.choices = [(c.id, c.title) for c in Category.query.all()]
+    form.artists_ids.choices = [(c.id, c.title) for c in Artist.query.all()]
     form.discount_value_type.choices = [
         (k.value, k.name) for k in DiscountValueTypeKinds
     ]
 
     if form.validate_on_submit():
         tmp_p = form.products_ids.data
-        tmp_c = form.categories_ids.data
+        tmp_c = form.artists_ids.data
         del form.products_ids
-        del form.categories_ids
+        del form.artists_ids
         form.populate_obj(sale)
         sale.save()
         sale.update_products(tmp_p)
-        sale.update_categories(tmp_c)
+        sale.update_artists(tmp_c)
         flash(lazy_gettext("Sale saved."), "success")
         return redirect(url_for("dashboard.sales"))
 

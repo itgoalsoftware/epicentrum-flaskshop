@@ -15,8 +15,8 @@ class TestBasicPageCanView:
     def test_homepage(self, client):
         is_success_res(client, "/")
 
-    def test_category_page(self, client):
-        is_success_res(client, "/products/category/1")
+    def test_artist_page(self, client):
+        is_success_res(client, "/products/artist/1")
 
     def test_product_page(self, client):
         is_success_res(client, "/products/1")

@@ -15,8 +15,8 @@ MC_KEY_PRODUCT_VARIANT = "product:product:{}:variant"
 MC_KEY_PRODUCT_DISCOUNT_PRICE = "product:product:{}:discount_price"
 MC_KEY_ATTRIBUTE_VALUES = "product:attribute:values:{}"
 MC_KEY_COLLECTION_PRODUCTS = "product:collection:{}:products:{}"
-MC_KEY_CATEGORY_PRODUCTS = "product:category:{}:products:{}"
-MC_KEY_CATEGORY_CHILDREN = "product:category:{}:children"
+MC_KEY_ARTIST_PRODUCTS = "product:artist:{}:products:{}"
+MC_KEY_ARTIST_CHILDREN = "product:artist:{}:children"
 
 
 class Product(Model):
@@ -27,7 +27,7 @@ class Product(Model):
     sold_count = Column(db.Integer(), default=0)
     review_count = Column(db.Integer(), default=0)
     basic_price = Column(db.DECIMAL(10, 2))
-    category_id = Column(db.Integer())
+    artist_id = Column(db.Integer())
     is_featured = Column(db.Boolean(), default=False)
     product_type_id = Column(db.Integer())
     attributes = Column(MutableDict.as_mutable(db.JSON()))
@@ -60,8 +60,8 @@ class Product(Model):
         return any(variant.is_in_stock for variant in self)
 
     @property
-    def category(self):
-        return Category.get_by_id(self.category_id)
+    def artist(self):
+        return Artist.get_by_id(self.artist_id)
 
     @property
     def product_type(self):
@@ -179,9 +179,9 @@ class Product(Model):
             rdb.delete(key)
 
     @staticmethod
-    def clear_category_cache(target):
-        keys = rdb.keys(MC_KEY_CATEGORY_PRODUCTS.format(
-            target.category_id, "*"))
+    def clear_artist_cache(target):
+        keys = rdb.keys(MC_KEY_ARTIST_PRODUCTS.format(
+            target.artist_id, "*"))
         for key in keys:
             rdb.delete(key)
 
@@ -198,14 +198,14 @@ class Product(Model):
     def __flush_before_update_event__(cls, target):
 
         super().__flush_before_update_event__(target)
-        target.clear_category_cache(target)
+        target.clear_artist_cache(target)
 
     @classmethod
     def __flush_after_update_event__(cls, target):
 
         super().__flush_after_update_event__(target)
         target.clear_mc(target)
-        target.clear_category_cache(target)
+        target.clear_artist_cache(target)
         if current_app.config["USE_ES"]:
             from flaskshop.public.search import Item
 
@@ -216,7 +216,7 @@ class Product(Model):
 
         super().__flush_delete_event__(target)
         target.clear_mc(target)
-        target.clear_category_cache(target)
+        target.clear_artist_cache(target)
 
         if current_app.config["USE_ES"]:
             from flaskshop.public.search import Item
@@ -224,17 +224,18 @@ class Product(Model):
             Item.delete(target)
 
 
-class Category(Model):
-    __tablename__ = "product_category"
+class Artist(Model):
+    __tablename__ = "product_artist"
     title = Column(db.String(255), nullable=False)
     parent_id = Column(db.Integer(), default=0)
     background_img = Column(db.String(255))
+    biography = Column(db.Text())
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return url_for("product.show_category", id=self.id)
+        return url_for("product.show_artist", id=self.id)
 
     @property
     def background_img_url(self):
@@ -242,17 +243,17 @@ class Category(Model):
 
     @property
     def products(self):
-        all_category_ids = [child.id for child in self.children] + [self.id]
-        return Product.query.filter(Product.category_id.in_(all_category_ids)).all()
+        all_artist_ids = [child.id for child in self.children] + [self.id]
+        return Product.query.filter(Product.artist_id.in_(all_artist_ids)).all()
 
     @property
-    @cache(MC_KEY_CATEGORY_CHILDREN.format("{self.id}"))
+    @cache(MC_KEY_ARTIST_CHILDREN.format("{self.id}"))
     def children(self):
-        return Category.query.filter(Category.parent_id == self.id).all()
+        return Artist.query.filter(Artist.parent_id == self.id).all()
 
     @property
     def parent(self):
-        return Category.get_by_id(self.parent_id)
+        return Artist.get_by_id(self.parent_id)
 
     @property
     def attr_filter(self):
@@ -270,51 +271,51 @@ class Category(Model):
         return sorted_attr_filter
 
     @classmethod
-    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{category_id}", "{page}"))
-    def get_product_by_category(cls, category_id, page):
-        category = Category.get_by_id(category_id)
-        all_category_ids = [
-            child.id for child in category.children] + [category.id]
-        query = Product.query.filter(Product.category_id.in_(all_category_ids))
-        ctx, query = get_product_list_context(query, category)
+    @cache_by_args(MC_KEY_ARTIST_PRODUCTS.format("{artist_id}", "{page}"))
+    def get_product_by_artist(cls, artist_id, page):
+        artist = Artist.get_by_id(artist_id)
+        all_artist_ids = [
+            child.id for child in artist.children] + [artist.id]
+        query = Product.query.filter(Product.artist_id.in_(all_artist_ids))
+        ctx, query = get_product_list_context(query, artist)
         pagination = query.paginate(page, per_page=16)
         del pagination.query
-        ctx.update(object=category, pagination=pagination,
+        ctx.update(object=artist, pagination=pagination,
                    products=pagination.items)
         return ctx
 
     @classmethod
-    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{title}", "{page}"))
-    def get_product_by_category_title(cls, title, page):
-        category = Category.get_by_title(title)
-        all_category_ids = [
-            child.id for child in category.children] + [category.id]
-        query = Product.query.filter(Product.category_id.in_(all_category_ids))
-        ctx, query = get_product_list_context(query, category)
+    @cache_by_args(MC_KEY_ARTIST_PRODUCTS.format("{title}", "{page}"))
+    def get_product_by_artist_title(cls, title, page):
+        artist = Artist.get_by_title(title)
+        all_artist_ids = [
+            child.id for child in artist.children] + [artist.id]
+        query = Product.query.filter(Product.artist_id.in_(all_artist_ids))
+        ctx, query = get_product_list_context(query, artist)
         pagination = query.paginate(page, per_page=16)
         del pagination.query
-        ctx.update(object=category, pagination=pagination,
+        ctx.update(object=artist, pagination=pagination,
                    products=pagination.items)
         return ctx
 
     @classmethod
-    @cache_by_args(MC_KEY_CATEGORY_PRODUCTS.format("{category_id}", "{page}"))
-    def get_all_categories(cls):
-        categories = Category.query.all()
-        categories_with_product_count = []
+    @cache_by_args(MC_KEY_ARTIST_PRODUCTS.format("{artist_id}", "{page}"))
+    def get_all_artists(cls):
+        artists = Artist.query.all()
+        artists_with_product_count = []
 
-        for category in categories:
+        for artist in artists:
             product_count = Product.query.filter(
-                Product.category_id == category.id).count()
-            categories_with_product_count.append((category, product_count))
+                Product.artist_id == artist.id).count()
+            artists_with_product_count.append((artist, product_count))
 
         ctx = {}
-        # ctx, query = get_product_list_context(query, category)
+        # ctx, query = get_product_list_context(query, artist)
         # pagination = query.paginate(page, per_page=16)
         # del pagination.query
-        # ctx.update(artists=categories, pagination=pagination,
+        # ctx.update(artists=artists, pagination=pagination,
         #            products=pagination.items)
-        ctx.update(categories_with_product_count=categories_with_product_count)
+        ctx.update(artists_with_product_count=artists_with_product_count)
         return ctx
 
     @classmethod
@@ -326,9 +327,9 @@ class Category(Model):
             child.parent_id = 0
             db.session.add(child)
         need_update_products = Product.query.filter_by(
-            category_id=self.id).all()
+            artist_id=self.id).all()
         for product in need_update_products:
-            product.category_id = 0
+            product.artist_id = 0
             db.session.add(product)
         db.session.delete(self)
         db.session.commit()
@@ -339,8 +340,8 @@ class Category(Model):
 
     @staticmethod
     def clear_mc(target):
-        rdb.delete(MC_KEY_CATEGORY_CHILDREN.format(target.id))
-        keys = rdb.keys(MC_KEY_CATEGORY_PRODUCTS.format(target.id, "*"))
+        rdb.delete(MC_KEY_ARTIST_CHILDREN.format(target.id))
+        keys = rdb.keys(MC_KEY_ARTIST_PRODUCTS.format(target.id, "*"))
         for key in keys:
             rdb.delete(key)
 
@@ -712,6 +713,7 @@ class ProductImage(Model):
 class Collection(Model):
     __tablename__ = "product_collection"
     title = Column(db.String(255), nullable=False)
+    description = Column(db.String(255))
     background_img = Column(db.String(255))
 
     def __str__(self):
@@ -742,8 +744,15 @@ class Collection(Model):
         attr_filter = set()
         for product in self.products:
             for attr in product.product_type.product_attributes:
-                attr_filter.add(attr)
-        return attr_filter
+                if attr.title not in ["Size", "Year", "Reference", "Publisher"]:
+                    attr_filter.add(attr)
+        order_of_names = ["Artist", "Technique", "Signature", "Period"]
+
+        def get_sort_index(attr):
+            return order_of_names.index(attr.title) if attr.title in order_of_names else len(order_of_names)
+
+        sorted_attr_filter = sorted(attr_filter, key=get_sort_index)
+        return sorted_attr_filter
 
     def update_products(self, new_products):
         origin_ids = (
@@ -823,7 +832,7 @@ class ProductCollection(Model):
 
 def get_product_list_context(query, obj):
     """
-    obj: collection or category, to get it`s attr_filter.
+    obj: collection or artist, to get it`s attr_filter.
     """
     args_dict = {}
     price_from = request.args.get("price_from", "", type=int)

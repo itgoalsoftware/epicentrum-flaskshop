@@ -5,7 +5,7 @@ from pluggy import HookimplMarker
 
 from flaskshop.account.models import User
 from flaskshop.extensions import login_manager
-from flaskshop.product.models import Product, Category
+from flaskshop.product.models import Product, Artist
 from sqlalchemy.orm import aliased
 
 from .models import Page
@@ -42,12 +42,12 @@ def search():
     else:
         query = f"%{query}%"
 
-        # Alias the Category model for use in the subquery
-        category_subquery = aliased(Category)
+        # Alias the Artist model for use in the subquery
+        artist_subquery = aliased(Artist)
 
-        pagination = Product.query.join(category_subquery, category_subquery.id == Product.category_id).filter(
+        pagination = Product.query.join(artist_subquery, artist_subquery.id == Product.artist_id).filter(
             (Product.title.ilike(query)) | (
-                category_subquery.title.ilike(query))
+                artist_subquery.title.ilike(query))
         ).paginate(page)
 
     return render_template(
