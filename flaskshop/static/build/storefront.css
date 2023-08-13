@@ -13859,6 +13859,12 @@ a.link--clean:hover {
   text-align: justify !important;
 }
 
+@media (max-width: 991.98px) {
+  .mb-md-4 {
+    margin-bottom: 4rem !important;
+  }
+}
+
 .qr img, .qr-r img {
   height: 110px;
   width: 110px;

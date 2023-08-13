@@ -19,6 +19,12 @@
     text-align: justify !important;
 }
 
+.mb-md-4 {
+    @include media-breakpoint-down(lg) {
+        margin-bottom: 4rem !important;
+    }
+  }
+
 .qr, .qr-r{
     img {
         height: 110px;
