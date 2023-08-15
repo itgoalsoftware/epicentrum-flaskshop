@@ -1,18 +1,32 @@
 import { Carousel } from "bootstrap/dist/js/bootstrap.esm.js";
 
-// Find the carousel element by its ID or other appropriate selector
-// Find the carousel element by its ID or other appropriate selector
-const carouselElement = document.querySelector("#carousel-product");
+document.addEventListener("DOMContentLoaded", function () {
+  const carouselElement = document.querySelector("#carousel-product");
+  const carouselInstance = new Carousel(carouselElement);
 
-// Get the carousel instance
-const carouselInstance = new Carousel(carouselElement);
+  const carouselControls = carouselElement.querySelectorAll(
+    ".carousel-control-prev, .carousel-control-next"
+  );
 
-// Listen for the "slid.bs.carousel" event
-carouselElement.addEventListener("slid.bs.carousel", function (event) {
-  // Check if the active index is back to the first slide (index 0)
-  if (event.to === 0) {
-    // Pause the carousel
-    console.log("Carousel has stopped.");
-    carouselInstance.pause();
-  }
+  const disableCarousel = () => {
+    carouselInstance.dispose();
+
+    let highInterval = 99999; // Set the interval value in milliseconds
+    carouselElement.setAttribute("data-bs-interval", highInterval);
+  };
+
+  const checkSlide = event => {
+    if (event.to === 0) {
+      disableCarousel();
+    }
+  };
+
+  carouselControls.forEach(control => {
+    control.addEventListener("click", function (event) {
+      event.preventDefault();
+      disableCarousel();
+    });
+  });
+
+  carouselElement.addEventListener("slid.bs.carousel", checkSlide);
 });
