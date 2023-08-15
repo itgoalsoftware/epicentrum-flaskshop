@@ -196,9 +196,7 @@ Fake for products data
 
 
 # step1
-def create_products_by_schema(
-    placeholder_dir, how_many, create_images, schema=DEFAULT_SCHEMA
-):
+def create_products_by_schema(placeholder_dir, how_many, create_images, schema=DEFAULT_SCHEMA):
     for product_type, type_schema in create_product_types_by_schema(schema):
         create_products_by_type(
             product_type,

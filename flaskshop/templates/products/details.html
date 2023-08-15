@@ -20,9 +20,10 @@
   <div class="col-md-6 col-12 product__gallery">
     {% with images=product.images %} {% if images %}
     <div
-      id="carousel-example-generic"
+      id="carousel-product"
       class="carousel slide"
       data-bs-ride="carousel"
+      
     >
       <div class="carousel-inner" role="listbox">
         {% for image in images %}
@@ -40,9 +41,10 @@
       {% if images|length > 1 %}
       <a
         class="carousel-control-prev"
-        data-bs-target="#carousel-example-generic"
+        data-bs-target="#carousel-product"
         role="button"
         data-bs-slide="prev"
+        
       >
         <svg
           data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"
@@ -50,9 +52,10 @@
       </a>
       <a
         class="carousel-control-next"
-        data-bs-target="#carousel-example-generic"
+        data-bs-target="#carousel-product"
         role="button"
         data-bs-slide="next"
+        
       >
         <svg
           data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"
@@ -63,7 +66,7 @@
       <ol class="carousel-indicators d-none d-md-block">
         {% for image in images %} {% if images|length > 1 %}
         <li
-          data-bs-target="#carousel-example-generic"
+          data-bs-target="#carousel-product"
           data-bs-slide-to="{{ loop.index - 1 }}"
           {%
           if
@@ -185,4 +188,5 @@
     </table>
   </div>
 </div>
+
 {% endblock content %}

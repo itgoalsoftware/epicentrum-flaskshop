@@ -26,17 +26,9 @@ def show_product_by_full_title(product_title, form=None):
     return render_template("products/details.html", product=product, form=form)
 
 
-def show_all_products():
-    # page = request.args.get("page", 1, type=int)
-    ctx = Product.get_all_products()
-    ctx.update(object=artist, pagination=pagination,
-               products=pagination.items)
-    return render_template("products/index.html", **ctx)
-
-
 @login_required
 def product_add_to_cart(id):
-    """this method return to the show method and use a form instance for display validater errors"""
+    """this method return to the show method and use a form instance for display validated errors"""
     product = Product.get_by_id(id)
     form = AddCartForm(request.form, product=product)
 

@@ -161,8 +161,8 @@ def seed(type):
     if type == "default":
         place_holder = Path("placeholders")
         create_products_by_schema(
-            placeholder_dir=place_holder, how_many=10, create_images=True
-        )
+            placeholder_dir=place_holder, how_many=10, create_images=True)
+
         create_generator = chain(
             create_collections_by_schema(place_holder),
             create_users(),
@@ -176,8 +176,10 @@ def seed(type):
             create_product_sales(),
             create_vouchers(),
         )
+
         for msg in create_generator:
             click.echo(msg)
+
     elif type == "product":
         place_holder = Path("placeholders")
         create_products_by_schema(
