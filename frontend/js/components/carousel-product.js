@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const disableCarousel = () => {
     carouselInstance.dispose();
 
-    let highInterval = 99999; // Set the interval value in milliseconds
+    let highInterval = 3600000; // Set the interval value in milliseconds
     carouselElement.setAttribute("data-bs-interval", highInterval);
   };
 
