@@ -1,8 +1,11 @@
 import { Carousel } from "bootstrap/dist/js/bootstrap.esm.js";
 
+let carouselInstance;
+let carouselControls;
+
 document.addEventListener("DOMContentLoaded", function () {
   const carouselElement = document.querySelector("#carousel-product");
-  const carouselInstance = new Carousel(carouselElement);
+  carouselInstance = new Carousel(carouselElement);
 
   const carouselControls = carouselElement.querySelectorAll(
     ".carousel-control-prev, .carousel-control-next"
@@ -10,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const disableCarousel = () => {
     carouselInstance.dispose();
-
+    console.log("C");
     let highInterval = 3600000; // Set the interval value in milliseconds
     carouselElement.setAttribute("data-bs-interval", highInterval);
   };
@@ -30,3 +33,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
   carouselElement.addEventListener("slid.bs.carousel", checkSlide);
 });
+
+export default { carouselInstance, carouselControls };

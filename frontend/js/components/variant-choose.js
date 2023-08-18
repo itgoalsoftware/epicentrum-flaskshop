@@ -1,54 +1,107 @@
+import { Carousel } from "bootstrap/dist/js/bootstrap.esm.js";
+
 let originalFrameWidth = "";
 let originalFrameHeight = "";
+let originalIndicatorsHTML = ""; // Store the original indicators HTML
+let carouselInstance;
+let carouselControls;
 
-document.querySelectorAll(".variant-picker__option").forEach(option => {
-  option.addEventListener("click", function () {
-    const variantId = parseInt(this.getAttribute("value"));
-    fetch(`api/variant_price/${variantId}`)
-      .then(response => response.json())
-      .then(result => {
-        document.querySelector(".text-info").innerHTML = `$ ${result.price}`;
-        document.querySelector(".stock").innerHTML = `Stock: ${result.stock}`;
+window.addEventListener("load", function () {
+  const carouselIndicators = document.querySelector(".carousel-indicators");
+  if (carouselIndicators) {
+    originalIndicatorsHTML = carouselIndicators.innerHTML;
+  }
+  const carouselElement = document.querySelector("#carousel-product");
+  carouselInstance = new Carousel(carouselElement);
+  carouselControls = carouselElement.querySelectorAll(
+    ".carousel-control-prev, .carousel-control-next"
+  );
+});
 
-        const frame = document.getElementById("frame");
-        const carouselItemImages =
-          document.querySelectorAll(".carousel-item img");
+document.addEventListener("DOMContentLoaded", function () {
+  const variantPickerOptions = document.querySelectorAll(
+    ".variant-picker__option"
+  );
 
-        if (variantId % 2 === 0) {
-          frame.style.opacity = 1; // Make the #frame div fully opaque
+  if (variantPickerOptions) {
+    variantPickerOptions.forEach(option => {
+      option.addEventListener("click", function () {
+        const variantId = parseInt(this.getAttribute("value"));
+        fetch(`api/variant_price/${variantId}`)
+          .then(response => response.json())
+          .then(result => {
+            document.querySelector(
+              ".text-info"
+            ).innerHTML = `$ ${result.price}`;
+            document.querySelector(
+              ".stock"
+            ).innerHTML = `Stock: ${result.stock}`;
 
-          // Apply smaller image class to active carousel-item's image
-          carouselItemImages.forEach(image => {
-            image.classList.remove("smaller-image");
-          });
+            const frame = document.getElementById("frame");
+            const carouselItemImages =
+              document.querySelectorAll(".carousel-item img");
+            const carouselIndicators = document.querySelector(
+              ".carousel-indicators"
+            );
 
-          // Apply the original dimensions to the #frame element
-          if (!originalFrameWidth && !originalFrameHeight) {
-            originalFrameWidth = frame.offsetWidth + "px";
-            originalFrameHeight = frame.offsetHeight + "px";
-          }
+            if (variantId % 2 === 0) {
+              frame.style.opacity = 1; // Make the #frame div fully opaque
 
-          frame.style.width = originalFrameWidth;
-          frame.style.height = originalFrameHeight;
+              // Apply smaller image class to active carousel-item's image
+              carouselItemImages.forEach(image => {
+                image.classList.remove("smaller-image");
+              });
 
-          const activeCarouselItem = document.querySelector(
-            ".carousel-item.active img"
-          );
-          if (activeCarouselItem) {
-            activeCarouselItem.classList.add("smaller-image");
-          }
-        } else {
-          frame.style.opacity = 0; // Make the #frame div fully transparent
+              if (carouselInstance) {
+                carouselInstance.to(0);
+              }
 
-          // Remove smaller image class from all carousel-item images
-          carouselItemImages.forEach(image => {
-            image.classList.remove("smaller-image");
-          });
+              if (carouselIndicators) {
+                while (carouselIndicators.firstChild) {
+                  carouselIndicators.removeChild(carouselIndicators.firstChild);
+                }
+              }
 
-          frame.style.width = "100%"; // Reset the width
-          frame.style.height = "100%"; // Reset the height
-        }
-      })
-      .catch(error => console.error(error));
-  });
+              if (!originalFrameWidth && !originalFrameHeight) {
+                originalFrameWidth = frame.offsetWidth + "px";
+                originalFrameHeight = frame.offsetHeight + "px";
+              }
+
+              frame.style.width = originalFrameWidth;
+              frame.style.height = originalFrameHeight;
+
+              carouselItemImages.forEach(image => {
+                image.classList.add("smaller-image");
+              });
+
+              if (carouselControls) {
+                carouselControls.forEach(control => {
+                  control.style.display = "flex";
+                });
+              }
+            } else {
+              frame.style.opacity = 0; // Make the #frame div fully transparent
+
+              carouselItemImages.forEach(image => {
+                image.classList.remove("smaller-image");
+              });
+
+              frame.style.width = "100%";
+              frame.style.height = "100%";
+
+              if (carouselIndicators) {
+                carouselIndicators.innerHTML = originalIndicatorsHTML;
+              }
+
+              if (carouselControls) {
+                carouselControls.forEach(control => {
+                  control.style.display = "flex";
+                });
+              }
+            }
+          })
+          .catch(error => console.error(error));
+      });
+    });
+  }
 });
