@@ -1,67 +1,73 @@
-<div id="carousel-product"
-      class="carousel slide"
-      data-bs-ride="carousel"
-      data-bs-interval="3000"
-      data-bs-pause="false"
-      data-bs-wrap="true"
-    >
-      <div class="carousel-inner" role="listbox">
-        {% for image in images %}
-        <div class="carousel-item{% if loop.first %} active{% endif %}">
-          <img
-            class="d-block img-fluid lazyload lazypreload"
-            alt=""
-            src="{{ image }}"
-            data-src="{{ image }}"
-            width="255"
-          />
-        </div>
-        {% endfor %}
-      </div>
-      {% if images|length > 1 %}
-      <a
-        class="carousel-control-prev"
-        data-bs-target="#carousel-product"
-        role="button"
-        data-bs-slide="prev" 
-      >
-        <svg
-          data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"
-        ></svg>
-      </a>
-      <a
-        class="carousel-control-next"
-        data-bs-target="#carousel-product"
-        role="button"
-        data-bs-slide="next"
-        
-      >
-        <svg
-          data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"
-        ></svg>
-      </a>
 
-      {% endif %}
-      <ol class="carousel-indicators d-none d-md-block">
-        {% for image in images %} {% if images|length > 1 %}
-        <li
-          data-bs-target="#carousel-product"
-          data-bs-slide-to="{{ loop.index - 1 }}"
-          {%
-          if
-          loop.first
-          %}
-          class="active"
-          {%
-          endif
-          %}
-        >
-          <img
-            class="lazyload lazypreload"
-            src="{{ image }}"
-            data-src="{{ image }}"
-          />
-        </li>
-        {% endif %} {% endfor %}
-      </ol>
-    </div>
+        <div id="carousel-container">
+            <div id="carousel-product"
+            class="carousel slide"
+            data-bs-ride="carousel"
+            data-bs-interval="3000"
+            data-bs-pause="false"
+            data-bs-wrap="true"
+            >
+            <div class="carousel-inner" role="listbox">
+                {% for image in images %}
+                <div class="carousel-item{% if loop.first %} active{% endif %}">
+                <img
+                    class="d-block img-fluid lazyload lazypreload"
+                    alt=""
+                    src="{{ image }}"
+                    data-src="{{ image }}"
+                    width="255"
+                />
+                </div>
+                {% endfor %}
+            </div>
+            {% if images|length > 1 %}
+            <a
+                class="carousel-control-prev"
+                data-bs-target="#carousel-product"
+                role="button"
+                data-bs-slide="prev" 
+            >
+                <svg
+                data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"
+                ></svg>
+            </a>
+            <a
+                class="carousel-control-next"
+                data-bs-target="#carousel-product"
+                role="button"
+                data-bs-slide="next"
+                
+            >
+                <svg
+                data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"
+                ></svg>
+            </a>
+
+            {% endif %}
+            <ol class="carousel-indicators d-none d-md-block">
+                {% for image in images %} {% if images|length > 1 %}
+                <li
+                data-bs-target="#carousel-product"
+                data-bs-slide-to="{{ loop.index - 1 }}"
+                {%
+                if
+                loop.first
+                %}
+                class="active"
+                {%
+                endif
+                %}
+                >
+                <img
+                    class="lazyload lazypreload"
+                    src="{{ image }}"
+                    data-src="{{ image }}"
+                />
+                </li>
+                {% endif %} {% endfor %}
+            </ol>
+            <div id="frame">
+                <img src="{{ url_for('static', filename='img/black_blue.png') }}" alt="Empty Inside" id="empty-image">
+            </div>
+    </div>  
+</div>
