@@ -1,5 +1,18 @@
 import { Carousel } from "bootstrap/dist/js/bootstrap.esm.js";
 
+// Utility functions
+function isValidElement(element) {
+  return element instanceof HTMLElement;
+}
+
+function isValidCarouselInstance(instance) {
+  return instance instanceof Carousel;
+}
+
+function isValidNodeList(nodeList) {
+  return nodeList && nodeList.length > 0;
+}
+
 let originalFrameWidth = "";
 let originalFrameHeight = "";
 let originalIndicatorsHTML = ""; // Store the original indicators HTML
@@ -52,11 +65,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 image.classList.remove("smaller-image");
               });
 
-              if (carouselInstance) {
-                carouselInstance.to(0);
+              if (isValidCarouselInstance(carouselInstance)) {
+                carouselInstance.to.call(carouselInstance, 0);
               }
 
-              if (carouselIndicators) {
+              if (isValidElement(carouselIndicators)) {
                 while (carouselIndicators.firstChild) {
                   carouselIndicators.removeChild(carouselIndicators.firstChild);
                 }
@@ -74,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 image.classList.add("smaller-image");
               });
 
-              if (carouselControls) {
+              if (isValidNodeList(carouselControls)) {
                 carouselControls.forEach(control => {
                   control.style.display = "flex";
                 });
@@ -89,11 +102,11 @@ document.addEventListener("DOMContentLoaded", function () {
               frame.style.width = "100%";
               frame.style.height = "100%";
 
-              if (carouselIndicators) {
+              if (isValidElement(carouselIndicators)) {
                 carouselIndicators.innerHTML = originalIndicatorsHTML;
               }
 
-              if (carouselControls) {
+              if (isValidNodeList(carouselControls)) {
                 carouselControls.forEach(control => {
                   control.style.display = "flex";
                 });
