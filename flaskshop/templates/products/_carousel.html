@@ -1,6 +1,5 @@
 <div id="carousel-container">
-    <div id="carousel-product" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000"
-        data-bs-pause="true" data-bs-wrap="true">
+    <div id="carousel-product" class="carousel slide" data-bs-ride="false" data-bs-pause="false" data-bs-wrap="true">
         <div class="carousel-inner" role="listbox">
             {% for image in images %}
             <div class="carousel-item{% if loop.first %} active{% endif %}">
