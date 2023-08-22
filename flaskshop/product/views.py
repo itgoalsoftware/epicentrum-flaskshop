@@ -39,7 +39,7 @@ def product_add_to_cart(id):
 
 def variant_price(id):
     variant = ProductVariant.get_by_id(id)
-    return jsonify({"price": float(variant.price), "stock": variant.stock})
+    return jsonify({"price": float(variant.price), "stock": variant.stock, "title": variant.title})
 
 
 def show_all_artists():

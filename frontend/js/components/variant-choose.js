@@ -1,5 +1,6 @@
 import { Carousel } from "bootstrap/dist/js/bootstrap.esm.js";
 
+
 // Utility functions
 function isValidElement(element) {
   return element instanceof HTMLElement;
@@ -15,23 +16,21 @@ function isValidNodeList(nodeList) {
 
 let originalFrameWidth = "";
 let originalFrameHeight = "";
-let originalIndicatorsHTML = ""; // Store the original indicators HTML
-let carouselInstance;
-let carouselControls;
+let originalIndicatorsHTML = "";
+let ifFramed = ""; // Store the original indicators HTML
 
-window.addEventListener("load", function () {
+document.addEventListener("DOMContentLoaded", function () {
+  const carouselElement = document.querySelector("#carousel-product");
+  const carouselControls = carouselElement.querySelectorAll(
+    ".carousel-control-prev, .carousel-control-next"
+  );
+  const carouselInstance = Carousel.getOrCreateInstance(carouselElement); 
+
   const carouselIndicators = document.querySelector(".carousel-indicators");
   if (carouselIndicators) {
     originalIndicatorsHTML = carouselIndicators.innerHTML;
   }
-  const carouselElement = document.querySelector("#carousel-product");
-  carouselInstance = new Carousel(carouselElement);
-  carouselControls = carouselElement.querySelectorAll(
-    ".carousel-control-prev, .carousel-control-next"
-  );
-});
 
-document.addEventListener("DOMContentLoaded", function () {
   const variantPickerOptions = document.querySelectorAll(
     ".variant-picker__option"
   );
@@ -49,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(
               ".stock"
             ).innerHTML = `Stock: ${result.stock}`;
-
+            ifFramed = result.title;
             const frame = document.getElementById("frame");
             const carouselItemImages =
               document.querySelectorAll(".carousel-item img");
@@ -57,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
               ".carousel-indicators"
             );
 
-            if (variantId % 2 === 0) {
+            if (ifFramed.toLowerCase() === "framed") {
               frame.style.opacity = 1; // Make the #frame div fully opaque
 
               // Apply smaller image class to active carousel-item's image
@@ -65,8 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 image.classList.remove("smaller-image");
               });
 
+              console.log(carouselInstance);
               if (isValidCarouselInstance(carouselInstance)) {
-                carouselInstance.to.call(carouselInstance, 0);
+                carouselInstance.to(0);
               }
 
               if (isValidElement(carouselIndicators)) {
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
               if (isValidNodeList(carouselControls)) {
                 carouselControls.forEach(control => {
-                  control.style.display = "flex";
+                  control.style.display = "none";
                 });
               }
             } else {
