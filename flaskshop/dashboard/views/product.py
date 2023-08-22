@@ -306,6 +306,10 @@ def variant_manage(id=None):
     else:
         variant = ProductVariant()
         form = VariantForm()
+    form.parent_id.choices = [(c.id, c.title)
+                              for c in ProductVariant.first_level_items(request.args.get("product_id"))]
+    form.parent_id.choices.insert(0, (0, "None"))
+    print(form.parent_id.choices)
     if form.validate_on_submit():
         form.populate_obj(variant)
         product_id = request.args.get("product_id")

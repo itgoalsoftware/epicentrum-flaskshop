@@ -1,7 +1,7 @@
 import itertools
 
 from flask import current_app, request, url_for
-from sqlalchemy import desc
+from sqlalchemy import desc, and_
 from sqlalchemy.ext.mutable import MutableDict
 
 from flaskshop.corelib.db import PropsItem
@@ -358,6 +358,7 @@ class Artist(Model):
 
 class ProductTypeAttributes(Model):
     """存储的产品的属性是包括用户可选和不可选"""
+    """The attributes of the stored product include user-selectable and non-selectable"""
 
     __tablename__ = "product_type_attribute"
     product_type_id = Column(db.Integer())
@@ -366,6 +367,7 @@ class ProductTypeAttributes(Model):
 
 class ProductTypeVariantAttributes(Model):
     """存储的产品SKU的属性是可以给用户去选择的"""
+    """The attributes of the stored product SKU can be selected by the user."""
 
     __tablename__ = "product_type_variant_attribute"
     product_type_id = Column(db.Integer())
@@ -476,6 +478,7 @@ class ProductVariant(Model):
     __tablename__ = "product_variant"
     sku = Column(db.String(32), unique=True)
     title = Column(db.String(255))
+    parent_id = Column(db.Integer(), default=0)
     price_override = Column(db.DECIMAL(10, 2), default=0.00)
     quantity = Column(db.Integer(), default=0)
     quantity_allocated = Column(db.Integer(), default=0)
@@ -495,6 +498,14 @@ class ProductVariant(Model):
     @sku_id.setter
     def sku_id(self, data):
         pass
+
+    @property
+    def parent(self):
+        return ProductVariant.get_by_id(self.parent_id)
+
+    @property
+    def children(self):
+        return ProductVariant.query.filter(ProductVariant.parent_id == self.id).all()
 
     @property
     def is_shipping_required(self):
@@ -550,6 +561,10 @@ class ProductVariant(Model):
     @staticmethod
     def clear_mc(target):
         rdb.delete(MC_KEY_PRODUCT_VARIANT.format(target.product_id))
+
+    @classmethod
+    def first_level_items(cls, product_id):
+        return cls.query.filter(and_(cls.parent_id == 0, cls.product_id == product_id)).all()
 
     @classmethod
     def __flush_insert_event__(cls, target):

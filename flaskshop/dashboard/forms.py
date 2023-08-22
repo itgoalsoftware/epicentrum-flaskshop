@@ -204,6 +204,7 @@ class VariantForm(FlaskForm):
         lazy_gettext("SKU"), validators=[DataRequired(), NumberRange(min=1, max=9999)]
     )
     title = StringField(lazy_gettext("Title"), validators=[DataRequired()])
+    parent_id = SelectField(lazy_gettext("Parent"), coerce=int, default=0)
     price_override = DecimalField(
         lazy_gettext("Price override"), default=0.00, validators=[NumberRange(min=0)]
     )
