@@ -100,6 +100,16 @@ class Product(Model):
         return ProductVariant.query.filter(ProductVariant.product_id == self.id).all()
 
     @property
+    def variant_first_level(self):
+        first_level_variant_ids = [
+            variant.id for variant in ProductVariant.first_level_items(self.id)]
+        return ProductVariant.query.filter(ProductVariant.id.in_(first_level_variant_ids)).all()
+
+    @property
+    def variant_children(self):
+        return [child for vari in self.variant for child in vari.children]
+
+    @property
     def attribute_map(self):
         items = {
             ProductAttribute.get_by_id(k): AttributeChoiceValue.get_by_id(v)

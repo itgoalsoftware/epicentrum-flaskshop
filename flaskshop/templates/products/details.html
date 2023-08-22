@@ -19,7 +19,7 @@
 <div class="row product">
   <div class="col-md-6 col-12 product__gallery">
     {% with images=product.images %} {% if images %}
-    
+
     {% include "products/_carousel.html" %}
 
     {% else %}
@@ -40,13 +40,8 @@
     </h2>
 
     {% if product.on_sale %} {% block orderform %}
-    <form
-      id="product-form"
-      role="form"
-      class="product-form1 clearfix"
-      method="post"
-      action="{{ url_for('product.product_add_to_cart', id=product.id) }}"
-    >
+    <form id="product-form" role="form" class="product-form1 clearfix" method="post"
+      action="{{ url_for('product.product_add_to_cart', id=product.id) }}">
       {{ form.csrf_token }} {% if form.variant.choices | length > 1 %}
       <div class="variant-picker">
         <div class="variant-picker__label">
@@ -54,18 +49,17 @@
         </div>
         <div class="btn-group" role="group" aria-label="select variant">
           {% for item in form.variant -%}
-          <input
-            type="radio"
-            class="btn-check variant-picker__option"
-            name="variant"
-            id="{{item.id}}"
-            autocomplete="off"
-            value="{{item.data}}"
-            required
-          />
-          <label class="btn btn-outline-primary" for="{{item.id}}"
-            >{{ item.label.text|safe }}</label
-          >
+          <input type="radio" class="btn-check variant-picker__option" name="variant" id="{{item.id}}"
+            autocomplete="off" value="{{item.data}}" required />
+          <label class="btn btn-outline-primary" for="{{item.id}}">{{ item.label.text|safe }}</label>
+          {% endfor %}
+        </div>
+
+        <div class="btn-group mt-3 d-block" role="group" aria-label="select child variant">
+          {% for child in form.child_variant %}
+          <input type="radio" class="btn-check variant-picker__option" name="child_variant" id="child_{{ child.id }}"
+            autocomplete="off" value="{{ child.data }}" required />
+          <label class="btn btn-outline-primary" for="child_{{ child.id }}">{{ child.label.text|safe }}</label>
           {% endfor %}
         </div>
 

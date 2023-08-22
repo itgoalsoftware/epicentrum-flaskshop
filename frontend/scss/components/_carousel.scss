@@ -2,17 +2,23 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%; /* Set the width to the full viewport width */
-    height: 100%; 
-    opacity: 0; /* Initially set the opacity to 0 (fully transparent) */
-    transition: opacity 0.3s linear; /* Add a transition effect */
+    width: 100%;
+    /* Set the width to the full viewport width */
+    height: 100%;
+    opacity: 0;
+    /* Initially set the opacity to 0 (fully transparent) */
+    transition: opacity 0.3s linear;
+    /* Add a transition effect */
 }
 
 
 #empty-image {
     display: block;
-    width: 100%; /* Make the image width fill its container */
-    height: 100%; /* Make the image height fill its container */
+    width: 100%;
+    /* Make the image width fill its container */
+    height: 100%;
+    /* Make the image height fill its container */
+    transition: opacity 0.3s linear;
 }
 
 #carousel-container {
@@ -20,11 +26,12 @@
 }
 
 .carousel-item.active img {
-    transition: transform 0.3s linear; /* Add a smooth transition effect */
+    transition: transform 0.3s linear;
+    /* Add a smooth transition effect */
 
 }
 
 .smaller-image {
-    transform: scale(0.64); /* Scale the image down by 20% */
+    transform: scale(0.64);
+    /* Scale the image down by 20% */
 }
-
