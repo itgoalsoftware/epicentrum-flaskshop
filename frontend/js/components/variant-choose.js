@@ -16,10 +16,7 @@ function isValidNodeList(nodeList) {
 
 function changeColor(element, dataAttr) {
   frame.style.opacity = 0; 
-  setTimeout(function() {
-    frame.style.opacity = 1;
-  }, 300);
-  // Find all label elements within the container
+  
   labelElements = document.querySelectorAll('.btn-group label');
 
   for (var i = 0; i < labelElements.length; i++) {
@@ -31,12 +28,7 @@ function changeColor(element, dataAttr) {
 
       associatedRadio.checked = true;
       
-      const event = new Event('click', {
-        bubbles: true,
-        cancelable: true,
-      });
-
-      associatedRadio.dispatchEvent(event);
+      showFrame();
 
       break;
     }
@@ -45,20 +37,62 @@ function changeColor(element, dataAttr) {
   return element.getAttribute(dataAttr)
 }
 
+function showFrame(){
+    setTimeout(function() {
+      frame.style.opacity = 1;
+    }, 300);
+
+    carouselItemImages.forEach(image => {
+      image.classList.remove("smaller-image");
+    });
+
+    if (isValidCarouselInstance(carouselInstance)) {
+      carouselInstance.to(0);
+    }
+
+    if (isValidElement(carouselIndicators)) {
+      while (carouselIndicators.firstChild) {
+        carouselIndicators.removeChild(carouselIndicators.firstChild);
+      }
+    }
+
+    if (!originalFrameWidth && !originalFrameHeight) {
+      originalFrameWidth = frame.offsetWidth + "px";
+      originalFrameHeight = frame.offsetHeight + "px";
+    }
+
+    frame.style.width = originalFrameWidth;
+    frame.style.height = originalFrameHeight;
+
+    carouselItemImages.forEach(image => {
+      image.classList.add("smaller-image");
+    });
+
+    if (isValidNodeList(carouselControls)) {
+      carouselControls.forEach(control => {
+        control.style.display = "none";
+      });
+    }
+}
+
 let originalFrameWidth = "";
 let originalFrameHeight = "";
 let originalIndicatorsHTML = "";
 let variantValue = ""; // Store the original indicators HTML
 let labelElements;
+let carouselItemImages;
+let carouselInstance;
+let carouselIndicators;
+let carouselControls;
 
 document.addEventListener("DOMContentLoaded", function () {
   const carouselElement = document.querySelector("#carousel-product");
-  const carouselControls = carouselElement.querySelectorAll(
+  carouselControls = carouselElement.querySelectorAll(
     ".carousel-control-prev, .carousel-control-next"
   );
-  const carouselInstance = Carousel.getOrCreateInstance(carouselElement); 
+  carouselInstance = Carousel.getOrCreateInstance(carouselElement); 
 
-  const carouselIndicators = document.querySelector(".carousel-indicators");
+  carouselIndicators = document.querySelector(".carousel-indicators");
   if (carouselIndicators) {
     originalIndicatorsHTML = carouselIndicators.innerHTML;
   }
@@ -84,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
             ).innerHTML = `Stock: ${result.stock}`;
             variantValue = result.title;
             const frame = document.getElementById("frame");
-            const carouselItemImages =
+            carouselItemImages =
               document.querySelectorAll(".carousel-item img");
             const carouselIndicators = document.querySelector(
               ".carousel-indicators"
@@ -93,40 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             switch (variantValue.toLowerCase()) {
               case 'framed':
-                frame.style.opacity = 1; // Make the #frame div fully opaque
-
-                // Apply smaller image class to active carousel-item's image
-                carouselItemImages.forEach(image => {
-                  image.classList.remove("smaller-image");
-                });
-  
-                if (isValidCarouselInstance(carouselInstance)) {
-                  carouselInstance.to(0);
-                }
-  
-                if (isValidElement(carouselIndicators)) {
-                  while (carouselIndicators.firstChild) {
-                    carouselIndicators.removeChild(carouselIndicators.firstChild);
-                  }
-                }
-  
-                if (!originalFrameWidth && !originalFrameHeight) {
-                  originalFrameWidth = frame.offsetWidth + "px";
-                  originalFrameHeight = frame.offsetHeight + "px";
-                }
-  
-                frame.style.width = originalFrameWidth;
-                frame.style.height = originalFrameHeight;
-  
-                carouselItemImages.forEach(image => {
-                  image.classList.add("smaller-image");
-                });
-  
-                if (isValidNodeList(carouselControls)) {
-                  carouselControls.forEach(control => {
-                    control.style.display = "none";
-                  });
-                }
+                showFrame();
                   break;
               case 'unframed':
                 frame.style.opacity = 0; // Make the #frame div fully transparent
