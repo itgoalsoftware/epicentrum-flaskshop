@@ -577,6 +577,12 @@ class ProductVariant(Model):
         return cls.query.filter(and_(cls.parent_id == 0, cls.product_id == product_id)).all()
 
     @classmethod
+    def first_level_items_by_variant(cls, variant_id):
+        variant = ProductVariant.get_by_id(variant_id)
+        product_id = variant.product_id
+        return cls.query.filter(and_(cls.parent_id == 0, cls.product_id == product_id)).all()
+
+    @classmethod
     def __flush_insert_event__(cls, target):
         super().__flush_insert_event__(target)
         target.clear_mc(target)
