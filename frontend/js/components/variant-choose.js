@@ -19,6 +19,29 @@ function changeColor(element, dataAttr) {
   setTimeout(function() {
     frame.style.opacity = 1;
   }, 300);
+  // Find all label elements within the container
+  labelElements = document.querySelectorAll('.btn-group label');
+
+  for (var i = 0; i < labelElements.length; i++) {
+    var label = labelElements[i];
+    if (label.textContent.trim() === "Framed") {
+
+      var associatedRadioId = label.getAttribute("for");
+      var associatedRadio = document.getElementById(associatedRadioId);
+
+      associatedRadio.checked = true;
+      
+      const event = new Event('click', {
+        bubbles: true,
+        cancelable: true,
+      });
+
+      associatedRadio.dispatchEvent(event);
+
+      break;
+    }
+  }
+
   return element.getAttribute(dataAttr)
 }
 
@@ -26,6 +49,7 @@ let originalFrameWidth = "";
 let originalFrameHeight = "";
 let originalIndicatorsHTML = "";
 let variantValue = ""; // Store the original indicators HTML
+let labelElements;
 
 document.addEventListener("DOMContentLoaded", function () {
   const carouselElement = document.querySelector("#carousel-product");
@@ -42,6 +66,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const variantPickerOptions = document.querySelectorAll(
     ".variant-picker__option"
   );
+
+  labelElements = document.querySelectorAll('.btn-group label');
 
   if (variantPickerOptions) {
     variantPickerOptions.forEach(option => {

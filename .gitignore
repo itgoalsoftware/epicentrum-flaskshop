@@ -57,3 +57,7 @@ migrations/
 /venv/
 /women_shop_empty.backup
 /.flaskenv
+
+#webpack build
+storefront.css
+storefront.js

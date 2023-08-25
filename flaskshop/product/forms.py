@@ -13,8 +13,8 @@ class MyIntegerField(IntegerField):
 
 
 class AddCartForm(FlaskForm):
-    variant = RadioField("variant", validators=[DataRequired()], coerce=int)
-    child_variant = RadioField("child_variant", validators=[
+    variant = RadioField("Variant", validators=[DataRequired()], coerce=int)
+    child_variant = RadioField("Passe-partout colour", validators=[
                                DataRequired()], coerce=int)
     quantity = MyIntegerField(
         "quantity", validators=[DataRequired(), NumberRange(min=1)], default=1

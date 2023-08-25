@@ -45,7 +45,7 @@
       {{ form.csrf_token }} {% if form.variant.choices | length > 1 %}
       <div class="variant-picker">
         <div class="variant-picker__label">
-          {{ form.variant.label.text|safe }}
+          {{ form.variant.label.text|safe }}:
         </div>
         <div class="btn-group" role="group" aria-label="select variant">
           {% for item in form.variant -%}
@@ -55,6 +55,9 @@
           {% endfor %}
         </div>
 
+        <div class="variant-picker__label">
+          {{ form.child_variant.label.text|safe }}:
+        </div>
         <div class="btn-group mt-3 d-block" role="group" aria-label="select child variant">
           {% for child in form.child_variant %}
           <input type="radio" class="btn-check variant-picker__option" name="child_variant" id="child_{{ child.id }}"
