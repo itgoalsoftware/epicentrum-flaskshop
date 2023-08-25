@@ -13,6 +13,15 @@ function isValidNodeList(nodeList) {
   return nodeList && nodeList.length > 0;
 }
 
+function isVariantSelected() {
+  for (const option of variantPickerOptions) {
+    if (option.checked) {
+      return option;
+    }
+  }
+  return null;
+}
+
 function changeColor(element, dataAttr) {
   frame.style.opacity = 0; 
   selectFramedVariant();
@@ -86,6 +95,7 @@ let carouselItemImages;
 let carouselInstance;
 let carouselIndicators;
 let carouselControls;
+let variantPickerOptions;
 
 document.addEventListener("DOMContentLoaded", function () {
   const carouselElement = document.querySelector("#carousel-product");
@@ -99,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     originalIndicatorsHTML = carouselIndicators.innerHTML;
   }
 
-  const variantPickerOptions = document.querySelectorAll(
+  variantPickerOptions = document.querySelectorAll(
     ".variant-picker__option"
   );
 
@@ -174,5 +184,14 @@ document.addEventListener("DOMContentLoaded", function () {
           .catch(error => console.error(error));
       });
     });
+  }
+  var selectedVariant = isVariantSelected();
+  if (selectedVariant) {
+    const event = new Event('click', {
+      bubbles: true,
+      cancelable: true,
+    });
+
+    selectedVariant.dispatchEvent(event);
   }
 });
