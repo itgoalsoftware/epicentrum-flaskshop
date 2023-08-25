@@ -1,7 +1,6 @@
 import { Carousel } from "bootstrap/dist/js/bootstrap.esm.js";
 
 
-// Utility functions
 function isValidElement(element) {
   return element instanceof HTMLElement;
 }
@@ -16,7 +15,12 @@ function isValidNodeList(nodeList) {
 
 function changeColor(element, dataAttr) {
   frame.style.opacity = 0; 
-  
+  selectFramedVariant();
+
+  return element.getAttribute(dataAttr)
+}
+
+function selectFramedVariant(){
   labelElements = document.querySelectorAll('.btn-group label');
 
   for (var i = 0; i < labelElements.length; i++) {
@@ -33,8 +37,6 @@ function changeColor(element, dataAttr) {
       break;
     }
   }
-
-  return element.getAttribute(dataAttr)
 }
 
 function showFrame(){
