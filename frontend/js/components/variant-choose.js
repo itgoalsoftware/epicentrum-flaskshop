@@ -16,6 +16,12 @@ function isValidNodeList(nodeList) {
 function isVariantSelected() {
   for (const option of variantPickerOptions) {
     if (option.checked) {
+      const event = new Event('click', {
+        bubbles: true,
+        cancelable: true,
+      });
+  
+      option.dispatchEvent(event);
       return option;
     }
   }
@@ -185,13 +191,5 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
-  var selectedVariant = isVariantSelected();
-  if (selectedVariant) {
-    const event = new Event('click', {
-      bubbles: true,
-      cancelable: true,
-    });
-
-    selectedVariant.dispatchEvent(event);
-  }
+  isVariantSelected();
 });
