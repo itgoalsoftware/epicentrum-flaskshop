@@ -14,8 +14,10 @@ class MyIntegerField(IntegerField):
 
 class AddCartForm(FlaskForm):
     variant = RadioField("Variant", validators=[DataRequired()], coerce=int)
-    child_variant = RadioField("Passe-partout colour", validators=[
+    child_variant = RadioField("Frame type", validators=[
                                DataRequired()], coerce=int)
+    last_child_variant = RadioField("Passe-partout colour", validators=[
+        DataRequired()], coerce=int)
     quantity = MyIntegerField(
         "quantity", validators=[DataRequired(), NumberRange(min=1)], default=1
     )
@@ -27,3 +29,6 @@ class AddCartForm(FlaskForm):
                                     for vari in product.variant_first_level]
             self.child_variant.choices = [
                 (child.id, child.title) for child in product.variant_children]
+
+            self.last_child_variant.choices = [
+                (child.id, child.title) for child in product.all_last_children]

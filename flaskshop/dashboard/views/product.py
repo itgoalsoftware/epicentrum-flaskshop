@@ -311,10 +311,10 @@ def variant_manage(id=None):
 
     if product_id is not None:
         form.parent_id.choices = [(c.id, c.title)
-                                  for c in ProductVariant.first_level_items(product_id)]
+                                  for c in ProductVariant.variants_by_product(product_id)]
     else:
         form.parent_id.choices = [(c.id, c.title)
-                                  for c in ProductVariant.first_level_items_by_variant(id)]
+                                  for c in ProductVariant.variants_by_variant(id)]
     form.parent_id.choices.insert(0, (0, "None"))
     print(form.parent_id.choices)
     if form.validate_on_submit():

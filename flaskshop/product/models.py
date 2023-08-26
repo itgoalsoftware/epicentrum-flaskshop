@@ -3,6 +3,8 @@ import itertools
 from flask import current_app, request, url_for
 from sqlalchemy import desc, and_
 from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.sql import exists, select
 
 from flaskshop.corelib.db import PropsItem
 from flaskshop.corelib.mc import cache, cache_by_args, rdb
@@ -107,7 +109,14 @@ class Product(Model):
 
     @property
     def variant_children(self):
-        return [child for vari in self.variant for child in vari.children]
+        return [child for vari in self.variant for child in vari.middle_children]
+
+    @property
+    def all_last_children(self):
+        all_children = []
+        for variant in self.variant:
+            all_children.extend(variant.last_children)
+        return all_children
 
     @property
     def attribute_map(self):
@@ -518,33 +527,49 @@ class ProductVariant(Model):
         return ProductVariant.query.filter(ProductVariant.parent_id == self.id).all()
 
     @property
+    def middle_children(self):
+
+        return ProductVariant.query.filter(
+            and_(ProductVariant.parent_id == self.id,
+                 ProductVariant.id.in_(ProductVariant.query.with_entities(ProductVariant.parent_id)))
+        ).all()
+
+    @property
+    def last_children(self):
+
+        return ProductVariant.query.filter(
+            and_(ProductVariant.parent_id == self.id,
+                 ~ProductVariant.id.in_(ProductVariant.query.with_entities(ProductVariant.parent_id)))
+        ).all()
+
+    @ property
     def is_shipping_required(self):
         return self.product.product_type.is_shipping_required
 
-    @property
+    @ property
     def quantity_available(self):
         return max(self.quantity - self.quantity_allocated, 0)
 
-    @property
+    @ property
     def is_in_stock(self):
         return self.quantity_available > 0
 
-    @property
+    @ property
     def stock(self):
         return self.quantity - self.quantity_allocated
 
-    @property
+    @ property
     def price(self):
         return self.price_override or self.product.price
 
-    @property
+    @ property
     def product(self):
         return Product.get_by_id(self.product_id)
 
     def get_absolute_url(self):
         return url_for("product.show", id=self.product.id)
 
-    @property
+    @ property
     def attribute_map(self):
         items = {
             ProductAttribute.get_by_id(k): AttributeChoiceValue.get_by_id(v)
@@ -552,7 +577,7 @@ class ProductVariant(Model):
         }
         return items
 
-    @property
+    @ property
     def title_map_for_attributes(self):
         title_map = {}
         for k, v in self.attributes.items():
@@ -568,31 +593,41 @@ class ProductVariant(Model):
             return False, f"{self.display_product()} has not enough stock"
         return True, "success"
 
-    @staticmethod
+    @ staticmethod
     def clear_mc(target):
         rdb.delete(MC_KEY_PRODUCT_VARIANT.format(target.product_id))
 
-    @classmethod
+    @ classmethod
+    def variants_by_product(cls, product_id):
+        return cls.query.filter(cls.product_id == product_id).all()
+
+    @ classmethod
+    def variants_by_variant(cls, variant_id):
+        variant = ProductVariant.get_by_id(variant_id)
+        product_id = variant.product_id
+        return cls.query.filter(cls.product_id == product_id).all()
+
+    @ classmethod
     def first_level_items(cls, product_id):
         return cls.query.filter(and_(cls.parent_id == 0, cls.product_id == product_id)).all()
 
-    @classmethod
+    @ classmethod
     def first_level_items_by_variant(cls, variant_id):
         variant = ProductVariant.get_by_id(variant_id)
         product_id = variant.product_id
         return cls.query.filter(and_(cls.parent_id == 0, cls.product_id == product_id)).all()
 
-    @classmethod
+    @ classmethod
     def __flush_insert_event__(cls, target):
         super().__flush_insert_event__(target)
         target.clear_mc(target)
 
-    @classmethod
+    @ classmethod
     def __flush_after_update_event__(cls, target):
         super().__flush_after_update_event__(target)
         target.clear_mc(target)
 
-    @classmethod
+    @ classmethod
     def __flush_delete_event__(cls, target):
         super().__flush_delete_event__(target)
         target.clear_mc(target)
@@ -605,18 +640,18 @@ class ProductAttribute(Model):
     def __str__(self):
         return self.title
 
-    @property
-    @cache(MC_KEY_ATTRIBUTE_VALUES.format("{self.id}"))
+    @ property
+    @ cache(MC_KEY_ATTRIBUTE_VALUES.format("{self.id}"))
     def values(self):
         return AttributeChoiceValue.query.filter(
             AttributeChoiceValue.attribute_id == self.id
         ).all()
 
-    @property
+    @ property
     def values_label(self):
         return ",".join([value.title for value in self.values])
 
-    @property
+    @ property
     def product_types_ids(self):
         at_ids = (
             ProductTypeAttributes.query.with_entities(
@@ -627,13 +662,13 @@ class ProductAttribute(Model):
         )
         return [id[0] for id in at_ids]
 
-    @property
+    @ property
     def types(self):
         return ProductType.query.filter(
             ProductType.id.in_(self.product_types_ids)
         ).all()
 
-    @property
+    @ property
     def types_label(self):
         return ",".join([t.title for t in self.types])
 
@@ -691,12 +726,12 @@ class ProductAttribute(Model):
         db.session.delete(self)
         db.session.commit()
 
-    @classmethod
+    @ classmethod
     def __flush_after_update_event__(cls, target):
         super().__flush_after_update_event__(target)
         rdb.delete(MC_KEY_ATTRIBUTE_VALUES.format(target.id))
 
-    @classmethod
+    @ classmethod
     def __flush_delete_event__(cls, target):
         super().__flush_delete_event__(target)
         rdb.delete(MC_KEY_ATTRIBUTE_VALUES.format(target.id))
@@ -710,7 +745,7 @@ class AttributeChoiceValue(Model):
     def __str__(self):
         return self.title
 
-    @property
+    @ property
     def attribute(self):
         return ProductAttribute.get_by_id(self.attribute_id)
 
@@ -723,16 +758,16 @@ class ProductImage(Model):
     def __str__(self):
         return url_for("static", filename=self.image, _external=True)
 
-    @staticmethod
+    @ staticmethod
     def clear_mc(target):
         rdb.delete(MC_KEY_PRODUCT_IMAGES.format(target.product_id))
 
-    @classmethod
+    @ classmethod
     def __flush_insert_event__(cls, target):
         super().__flush_insert_event__(target)
         target.clear_mc(target)
 
-    @classmethod
+    @ classmethod
     def __flush_delete_event__(cls, target):
         super().__flush_delete_event__(target)
         target.clear_mc(target)
@@ -753,11 +788,11 @@ class Collection(Model):
     def get_absolute_url(self):
         return url_for("product.show_collection", id=self.id)
 
-    @property
+    @ property
     def background_img_url(self):
         return url_for("static", filename=self.background_img)
 
-    @property
+    @ property
     def products_ids(self):
         at_ids = (
             ProductCollection.query.with_entities(ProductCollection.product_id)
@@ -766,11 +801,11 @@ class Collection(Model):
         )
         return [id[0] for id in at_ids]
 
-    @property
+    @ property
     def products(self):
         return Product.query.filter(Product.id.in_(self.products_ids)).all()
 
-    @property
+    @ property
     def attr_filter(self):
         attr_filter = set()
         for product in self.products:
@@ -822,8 +857,8 @@ class ProductCollection(Model):
     product_id = Column(db.Integer())
     collection_id = Column(db.Integer())
 
-    @classmethod
-    @cache_by_args(MC_KEY_COLLECTION_PRODUCTS.format("{collection_id}", "{page}"))
+    @ classmethod
+    @ cache_by_args(MC_KEY_COLLECTION_PRODUCTS.format("{collection_id}", "{page}"))
     def get_product_by_collection(cls, collection_id, page):
         collection = Collection.get_by_id(collection_id)
         at_ids = (
@@ -839,23 +874,23 @@ class ProductCollection(Model):
                    products=pagination.items)
         return ctx
 
-    @staticmethod
+    @ staticmethod
     def clear_mc(target):
         keys = rdb.keys(MC_KEY_COLLECTION_PRODUCTS.format(
             target.collection_id, "*"))
         for key in keys:
             rdb.delete(key)
 
-    @classmethod
+    @ classmethod
     def __flush_insert_event__(cls, target):
         target.clear_mc(target)
 
-    @classmethod
+    @ classmethod
     def __flush_after_update_event__(cls, target):
         super().__flush_after_update_event__(target)
         target.clear_mc(target)
 
-    @classmethod
+    @ classmethod
     def __flush_delete_event__(cls, target):
         super().__flush_delete_event__(target)
         target.clear_mc(target)
