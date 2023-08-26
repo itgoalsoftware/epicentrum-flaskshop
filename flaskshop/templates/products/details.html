@@ -69,10 +69,10 @@
         <div class="variant-picker__label">
           {{ form.last_child_variant.label.text|safe }}:
         </div>
-        <div class="btn-group mt-3 d-block" role="group" aria-label="select child variant">
+        <div class="btn-group mt-3 d-block" role="group" aria-label="select last child variant">
           {% for child in form.last_child_variant %}
-          <input type="radio" class="btn-check variant-picker__option" name="child_variant" id="child_{{ child.id }}"
-            autocomplete="off" value="{{ child.data }}" required />
+          <input type="radio" class="btn-check variant-picker__option" name="last_child_variant"
+            id="child_{{ child.id }}" autocomplete="off" value="{{ child.data }}" required />
           <label class="btn btn-outline-primary" for="child_{{ child.id }}">{{ child.label.text|safe }}</label>
           {% endfor %}
         </div>
