@@ -38,8 +38,6 @@ function changeColor(element, dataAttr) {
 }
 
 function selectFramedVariant(){
-  labelElements = document.querySelectorAll('.btn-group label');
-
   for (var i = 0; i < labelElements.length; i++) {
     var label = labelElements[i];
     if (label.textContent.trim() === "Framed") {
@@ -60,6 +58,20 @@ function selectFramedVariant(){
     }
   }
   showFrame();
+}
+
+function unselectFramedVariants(){
+  for (var i = 0; i < labelElements.length; i++) {
+    var label = labelElements[i];
+    
+    if (label.textContent.trim() !== "Unframed") {
+      
+      var associatedRadioId = label.getAttribute("for");
+      var associatedRadio = document.getElementById(associatedRadioId);
+      
+      associatedRadio.checked = false;
+    }
+  }
 }
 
 function showFrame(){
@@ -174,6 +186,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     control.style.display = "flex";
                   });
                 }
+
+                unselectFramedVariants()
                   break;
                 case 'blue': 
                   passepartout_img.src = changeColor(passepartout, "data-blue");
