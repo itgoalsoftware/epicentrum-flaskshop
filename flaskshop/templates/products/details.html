@@ -49,7 +49,7 @@
         </div>
         <div class="btn-group" role="group" aria-label="select variant">
           {% for item in form.variant -%}
-          <input type="radio" class="btn-check variant-picker__option" name="variant" id="{{item.id}}"
+          <input type="radio" class="btn-check variant-picker__option primary-variant" name="variant" id="{{item.id}}"
             autocomplete="off" value="{{item.data}}" required />
           <label class="btn btn-outline-primary" for="{{item.id}}">{{ item.label.text|safe }}</label>
           {% endfor %}
@@ -60,8 +60,8 @@
         </div>
         <div class="btn-group mt-3 d-block" role="group" aria-label="select child variant">
           {% for child in form.child_variant %}
-          <input type="radio" class="btn-check variant-picker__option" name="child_variant" id="child_{{ child.id }}"
-            autocomplete="off" value="{{ child.data }}" required />
+          <input type="radio" class="btn-check variant-picker__option secondary-variant" name="child_variant"
+            id="child_{{ child.id }}" autocomplete="off" value="{{ child.data }}" required />
           <label class="btn btn-outline-primary" for="child_{{ child.id }}">{{ child.label.text|safe }}</label>
           {% endfor %}
         </div>
