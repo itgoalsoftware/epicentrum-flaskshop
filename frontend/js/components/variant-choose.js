@@ -30,6 +30,8 @@ function isVariantSelected() {
 
 function changeColor(element, dataAttr) {
   frame.style.opacity = 0; 
+  passepartout.style.opacity = 0;
+
   selectFramedVariant();
 
   return element.getAttribute(dataAttr)
@@ -44,19 +46,26 @@ function selectFramedVariant(){
 
       var associatedRadioId = label.getAttribute("for");
       var associatedRadio = document.getElementById(associatedRadioId);
-
-      associatedRadio.checked = true;
       
-      showFrame();
+      associatedRadio.checked = true;   
+    }
+    
+    if (label.textContent.trim() === "Midnight") {
 
-      break;
+      var associatedRadioId = label.getAttribute("for");
+      var associatedRadio = document.getElementById(associatedRadioId);
+      
+      if(!frameTypeClicked)
+      associatedRadio.checked = true;   
     }
   }
+  showFrame();
 }
 
 function showFrame(){
     setTimeout(function() {
       frame.style.opacity = 1;
+      passepartout.style.opacity = 1;
     }, 300);
 
     carouselItemImages.forEach(image => {
@@ -73,14 +82,6 @@ function showFrame(){
       }
     }
 
-    if (!originalFrameWidth && !originalFrameHeight) {
-      originalFrameWidth = frame.offsetWidth + "px";
-      originalFrameHeight = frame.offsetHeight + "px";
-    }
-
-    frame.style.width = originalFrameWidth;
-    frame.style.height = originalFrameHeight;
-
     carouselItemImages.forEach(image => {
       image.classList.add("smaller-image");
     });
@@ -92,8 +93,6 @@ function showFrame(){
     }
 }
 
-let originalFrameWidth = "";
-let originalFrameHeight = "";
 let originalIndicatorsHTML = "";
 let variantValue = ""; // Store the original indicators HTML
 let labelElements;
@@ -102,6 +101,9 @@ let carouselInstance;
 let carouselIndicators;
 let carouselControls;
 let variantPickerOptions;
+let frame;
+let passepartout;
+let frameTypeClicked = false;
 
 document.addEventListener("DOMContentLoaded", function () {
   const carouselElement = document.querySelector("#carousel-product");
@@ -135,20 +137,24 @@ document.addEventListener("DOMContentLoaded", function () {
               ".stock"
             ).innerHTML = `Stock: ${result.stock}`;
             variantValue = result.title;
-            const frame = document.getElementById("frame");
+            frame = document.getElementById("frame-container");
+            passepartout = document.getElementById('passepartout-container');
             carouselItemImages =
               document.querySelectorAll(".carousel-item img");
             const carouselIndicators = document.querySelector(
               ".carousel-indicators"
             );
-            const frameImage = document.getElementById('empty-image');
 
+            const passepartout_img = document.getElementById('passepartout-img');
+            const frame_img = document.getElementById('frame-img');
+            
             switch (variantValue.toLowerCase()) {
               case 'framed':
                 showFrame();
                   break;
               case 'unframed':
                 frame.style.opacity = 0; // Make the #frame div fully transparent
+                passepartout.style.opacity = 0;
 
                 carouselItemImages.forEach(image => {
                   image.classList.remove("smaller-image");
@@ -156,6 +162,8 @@ document.addEventListener("DOMContentLoaded", function () {
   
                 frame.style.width = "100%";
                 frame.style.height = "100%";
+                passepartout.style.width = "100%";
+                passepartout.style.height = "100%";
   
                 if (isValidElement(carouselIndicators)) {
                   carouselIndicators.innerHTML = originalIndicatorsHTML;
@@ -168,22 +176,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                   break;
                 case 'blue': 
-                  frameImage.src = changeColor(frame, "data-blue");
+                  passepartout_img.src = changeColor(passepartout, "data-blue");
                   break;
                 case 'red':  
-                  frameImage.src = changeColor(frame, "data-red");
+                  passepartout_img.src = changeColor(passepartout, "data-red");
                   break;
                 case 'green':
-                  frameImage.src = changeColor(frame, "data-green");
+                  passepartout_img.src = changeColor(passepartout, "data-green");
                   break;
                 case 'brown':
-                  frameImage.src = changeColor(frame, "data-brown");
+                  passepartout_img.src = changeColor(passepartout, "data-brown");
                   break;
                 case 'violet':
-                  frameImage.src = changeColor(frame, "data-violet");
+                  passepartout_img.src = changeColor(passepartout, "data-violet");
+                  break;
+                case 'classic':
+                  frameTypeClicked = true;
+                  frame_img.src = changeColor(frame, "data-classic-frame");
+                  break;
+                case 'golden':
+                  frameTypeClicked = true;
+                  frame_img.src = changeColor(frame, "data-golden-frame");
+                  break;
+                case 'midnight':
+                  frameTypeClicked = true;
+                  frame_img.src = changeColor(frame, "data-midnight-frame");
                   break;
               default:
-                  frameImage.src = frame.getAttribute("data-blue");
+                  passepartout_img.src = passepartout.getAttribute("data-blue");
                   break;
               }  
           })

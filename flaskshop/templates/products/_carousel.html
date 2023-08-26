@@ -25,12 +25,19 @@
             </li>
             {% endif %} {% endfor %}
         </ol>
-        <div id="frame" data-blue="{{ url_for('static', filename='img/black_blue.png') }}"
+        <div id="passepartout-container" data-blue="{{ url_for('static', filename='img/black_blue.png') }}"
             data-red="{{ url_for('static', filename='img/black_red.png') }}"
             data-green="{{ url_for('static', filename='img/black_green.png') }}"
             data-brown="{{ url_for('static', filename='img/black_brown.png') }}"
             data-violet="{{ url_for('static', filename='img/black_violet.png') }}">
-            <img src="{{ url_for('static', filename='img/black_blue.png') }}" alt="Empty Inside" id="empty-image">
+            <img id="passepartout-img" class="empty-image" src="{{ url_for('static', filename='img/black_blue.png') }}"
+                alt="Empty Inside">
+        </div>
+        <div id="frame-container" data-classic-frame="{{ url_for('static', filename='img/classic_frame.png') }}"
+            data-golden-frame=" {{ url_for('static', filename='img/golden_frame.png' ) }}"
+            data-midnight-frame=" {{ url_for('static', filename='img/midnight_frame.png' ) }}">
+            <img id="frame-img" class="empty-image" src="{{ url_for('static', filename='img/classic_frame.png') }}"
+                alt="Frame">
         </div>
 
     </div>

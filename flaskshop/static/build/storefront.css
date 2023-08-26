@@ -12158,7 +12158,7 @@ a.btn {
   background-color: #f3f3f3;
 }
 
-#frame {
+#frame-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -12171,7 +12171,20 @@ a.btn {
   /* Add a transition effect */
 }
 
-#empty-image {
+#passepartout-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* Set the width to the full viewport width */
+  height: 100%;
+  opacity: 0;
+  /* Initially set the opacity to 0 (fully transparent) */
+  transition: opacity 0.3s linear;
+  /* Add a transition effect */
+}
+
+.empty-image {
   display: block;
   width: 100%;
   /* Make the image width fill its container */
