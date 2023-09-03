@@ -5,6 +5,7 @@ let originalIndicatorsHTML = "";
 let labelElements, cImages, cInstance, cIndicators, cControls, cElement, variantPickerOptions;
 let frame, passepartout;
 let cachedVariantsArray = null;
+let productPrice;
 
 document.addEventListener("DOMContentLoaded", function () {
   initializeElements();
@@ -20,6 +21,15 @@ const attachVariantListeners = () => {
       option.addEventListener("click", () => handleVariantClick(option));
     });
   }
+};
+
+const parseVariantId = (option) => {
+  const variantId = parseInt(option.getAttribute("value"));
+  return variantId;
+};
+
+const findVariantById = (variantsArray, variantId) => {
+  return variantsArray.find(variant => variant.id === variantId);
 };
 
 const handleVariantClick = (option) => {
@@ -90,6 +100,7 @@ const handleUnframed = () => {
   setFullSizeFrameAndPassepartout();
   resetIndicatorsAndControls();
   unselectFramedVariants();
+  restorePrice();
 };
 
 const hideFrameAndPassepartout = () => {
@@ -127,11 +138,36 @@ const selectFramedVariant = () => {
   const blue = "blue";
   checkRadioButton(framed);
   checkRadioButton(classic);
+  fetchPriceOverride(classic);
+
   handleFramedVariant(frame, classic);
   checkRadioButton(blue);
   handleFramedVariant(passepartout, blue)
   showFrame();
 };
+
+const fetchPriceOverride = (label) => {
+    fetchAllVariantsData()
+    .then(variantsArray => {
+      const result = variantsArray.find(variant => variant.title.toLowerCase().trim() === label.toLowerCase().trim());
+      if (result && result.price !== 0) {
+        const priceElement = document.querySelector(".text-info");
+        if (priceElement) {
+          priceElement.innerHTML = `$ ${result.price}`;
+        }
+      }
+    })
+    .catch(error => {
+      console.error("Error fetching price:", error);
+    });
+};
+
+const restorePrice = () => {
+  const priceElement = document.querySelector(".text-info");
+        if (priceElement) {
+          priceElement.innerHTML = `${productPrice}`;
+        }
+}
 
 const checkRadioButton = (desiredLabelText, checked = true) => {
   for (const label of labelElements) {
@@ -147,7 +183,9 @@ const checkRadioButton = (desiredLabelText, checked = true) => {
 
 const checkCurrentRadioButtons = (element) => {
   checkRadioButton("Framed");
-  checkRadioButton(getLabelByElementSrc(element));
+  let label = getLabelByElementSrc(element);
+  checkRadioButton(label);
+  fetchPriceOverride(label);
 }
 
 const getLabelByElementSrc = (element) => {
@@ -160,7 +198,6 @@ const getLabelByElementSrc = (element) => {
     }
   }
 }
-
 
 const unselectFramedVariants = () => {
   for (const label of labelElements) {
@@ -226,6 +263,7 @@ const initializeElements = () => {
   labelElements = document.querySelectorAll('.btn-group label');
   frame = document.getElementById("frame-container");
   passepartout = document.getElementById('passepartout-container');
+  productPrice = document.querySelector(".text-info").innerHTML;
 }
 
 const isValidElement = (element) => element instanceof HTMLElement;
