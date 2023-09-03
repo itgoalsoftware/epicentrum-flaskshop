@@ -594,6 +594,10 @@ class ProductVariant(Model):
         rdb.delete(MC_KEY_PRODUCT_VARIANT.format(target.product_id))
 
     @ classmethod
+    def get_all_variants(cls):
+        return cls.query.all()
+
+    @ classmethod
     def variants_by_product(cls, product_id):
         return cls.query.filter(cls.product_id == product_id).all()
 

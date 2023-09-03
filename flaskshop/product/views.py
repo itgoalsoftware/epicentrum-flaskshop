@@ -56,6 +56,24 @@ def variant_price(id):
         return jsonify({"error": str(e)}), 500
 
 
+def get_all_variants():
+    try:
+        variants = ProductVariant.get_all_variants()  # Assuming you have a method to retrieve all variants
+        variants_data = []
+
+        for variant in variants:
+            variant_data = {
+                "id": variant.id,
+                "title": variant.title,
+                "price": float(variant.price_override)
+            }
+            variants_data.append(variant_data)
+
+        return jsonify(variants_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 def show_all_artists():
     # page = request.args.get("page", 1, type=int)
     ctx = Artist.get_all_artists()
@@ -88,6 +106,7 @@ def flaskshop_load_blueprints(app):
                     view_func=show_product_by_full_title)
 
     bp.add_url_rule("/api/variant_price/<int:id>", view_func=variant_price)
+    bp.add_url_rule("/api/all_variants_data", view_func=get_all_variants)
     bp.add_url_rule("/<int:id>/add",
                     view_func=product_add_to_cart, methods=["POST"])
     bp.add_url_rule("/artists", view_func=show_all_artists)
