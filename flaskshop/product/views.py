@@ -33,13 +33,27 @@ def product_add_to_cart(id):
     form = AddCartForm(request.form, product=product)
 
     if form.validate_on_submit():
-        Cart.add_to_currentuser_cart(form.quantity.data, form.variant.data)
+        Cart.add_to_currentuser_cart(
+            id, form.quantity.data, form.variant.data, form.child_variant.data, form.last_child_variant.data)
     return redirect(url_for("product.show", id=id))
 
 
 def variant_price(id):
-    variant = ProductVariant.get_by_id(id)
-    return jsonify({"price": float(variant.price), "stock": variant.stock, "title": variant.title})
+    try:
+        if isinstance(id, int):
+            variant = ProductVariant.get_by_id(id)
+        elif isinstance(id, str):
+            title = id
+            variant = ProductVariant.get_by_title(title)
+        else:
+            return jsonify({"error": "Missing id or title parameter"}), 400
+
+        if variant:
+            return jsonify({"price": float(variant.price_override), "title": variant.title})
+        else:
+            return jsonify({"error": "Variant not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 def show_all_artists():

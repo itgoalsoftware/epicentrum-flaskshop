@@ -25,6 +25,8 @@ class Product(Model):
     __tablename__ = "product_product"
     title = Column(db.String(255), nullable=False)
     on_sale = Column(db.Boolean(), default=True)
+    quantity = Column(db.Integer(), default=0)
+    quantity_allocated = Column(db.Integer(), default=0)
     rating = Column(db.DECIMAL(8, 2), default=5.0)
     sold_count = Column(db.Integer(), default=0)
     review_count = Column(db.Integer(), default=0)
@@ -57,9 +59,17 @@ class Product(Model):
             return str(self.images[0])
         return ""
 
-    @property
+    @ property
+    def quantity_available(self):
+        return max(self.quantity - self.quantity_allocated, 0)
+
+    @ property
     def is_in_stock(self):
-        return any(variant.is_in_stock for variant in self)
+        return self.quantity_available > 0
+
+    @ property
+    def stock(self):
+        return self.quantity - self.quantity_allocated
 
     @property
     def artist(self):
@@ -136,6 +146,11 @@ class Product(Model):
             if product_attribute is not None and attribute_choice_value is not None:
                 title_map[product_attribute.title] = attribute_choice_value.title
         return title_map
+
+    def check_enough_stock(self, quantity):
+        if self.stock < quantity:
+            return False, f"{self.display_product()} has not enough stock"
+        return True, "success"
 
     @classmethod
     @cache(MC_KEY_FEATURED_PRODUCTS.format("{num}"))
@@ -499,8 +514,6 @@ class ProductVariant(Model):
     title = Column(db.String(255))
     parent_id = Column(db.Integer(), default=0)
     price_override = Column(db.DECIMAL(10, 2), default=0.00)
-    quantity = Column(db.Integer(), default=0)
-    quantity_allocated = Column(db.Integer(), default=0)
     product_id = Column(db.Integer(), default=0)
     attributes = Column(MutableDict.as_mutable(db.JSON()))
 
@@ -547,18 +560,6 @@ class ProductVariant(Model):
         return self.product.product_type.is_shipping_required
 
     @ property
-    def quantity_available(self):
-        return max(self.quantity - self.quantity_allocated, 0)
-
-    @ property
-    def is_in_stock(self):
-        return self.quantity_available > 0
-
-    @ property
-    def stock(self):
-        return self.quantity - self.quantity_allocated
-
-    @ property
     def price(self):
         return self.price_override or self.product.price
 
@@ -587,11 +588,6 @@ class ProductVariant(Model):
             if product_attribute is not None and attribute_choice_value is not None:
                 title_map[product_attribute.title] = attribute_choice_value.title
         return title_map
-
-    def check_enough_stock(self, quantity):
-        if self.stock < quantity:
-            return False, f"{self.display_product()} has not enough stock"
-        return True, "success"
 
     @ staticmethod
     def clear_mc(target):

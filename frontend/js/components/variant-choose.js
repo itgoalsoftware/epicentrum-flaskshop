@@ -1,229 +1,165 @@
 import { Carousel } from "bootstrap/dist/js/bootstrap.esm.js";
 
 
-function isValidElement(element) {
-  return element instanceof HTMLElement;
-}
+const isValidElement = (element) => element instanceof HTMLElement;
+const isValidCarouselInstance = (instance) => instance instanceof Carousel;
+const isValidNodeList = (nodeList) => nodeList && nodeList.length > 0;
 
-function isValidCarouselInstance(instance) {
-  return instance instanceof Carousel;
-}
-
-function isValidNodeList(nodeList) {
-  return nodeList && nodeList.length > 0;
-}
-
-function isVariantSelected() {
+const isVariantSelectedBeforeDOMLoaded = () => {
   for (const option of variantPickerOptions) {
     if (option.checked) {
-      const event = new Event('click', {
-        bubbles: true,
-        cancelable: true,
-      });
-  
-      option.dispatchEvent(event);
+      option.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
       return option;
     }
   }
   return null;
-}
+};
 
-function changeColor(element, dataAttr) {
-  frame.style.opacity = 0; 
+const setColor = (element, dataAttr) => {
+  frame.style.opacity = 0;
   passepartout.style.opacity = 0;
-
   selectFramedVariant();
+  return element.getAttribute(dataAttr);
+};
 
-  return element.getAttribute(dataAttr)
-}
+const selectFramedVariant = () => {
+  const frameType = "Classic";
+  for (const label of labelElements) {
+    const labelText = label.textContent.trim();
+    const associatedRadioId = label.getAttribute("for");
+    const associatedRadio = document.getElementById(associatedRadioId);
 
-function selectFramedVariant(){
-  for (var i = 0; i < labelElements.length; i++) {
-    var label = labelElements[i];
-    if (label.textContent.trim() === "Framed") {
-
-      var associatedRadioId = label.getAttribute("for");
-      var associatedRadio = document.getElementById(associatedRadioId);
-      
-      associatedRadio.checked = true;   
+    if (labelText === "Framed") {
+      associatedRadio.checked = true;
     }
-    
-    if (label.textContent.trim() === "Midnight") {
 
-      var associatedRadioId = label.getAttribute("for");
-      var associatedRadio = document.getElementById(associatedRadioId);
-      
-      if(!frameTypeClicked)
-      associatedRadio.checked = true;   
+    if (labelText === frameType && !frameTypeClicked) {
+      associatedRadio.checked = true;
+    }
+
+    if (labelText === "Blue" && !passepartoutClicked) {
+      associatedRadio.checked = true;
     }
   }
   showFrame();
 }
 
-function unselectFramedVariants(){
-  for (var i = 0; i < labelElements.length; i++) {
-    var label = labelElements[i];
+const unselectFramedVariants = () => {
+  for (const label of labelElements) {
+    const labelText = label.textContent.trim();
     
-    if (label.textContent.trim() !== "Unframed") {
-      
-      var associatedRadioId = label.getAttribute("for");
-      var associatedRadio = document.getElementById(associatedRadioId);
-      
+    if (labelText !== "Unframed") {
+      const associatedRadioId = label.getAttribute("for");
+      const associatedRadio = document.getElementById(associatedRadioId);
       associatedRadio.checked = false;
     }
+
+    passepartoutClicked = false;
+    frameTypeClicked = false;
   }
 }
 
-function showFrame(){
-    setTimeout(function() {
-      frame.style.opacity = 1;
-      passepartout.style.opacity = 1;
-    }, 300);
+const showFrame = () => {
+  setTimeout(() => {
+    frame.style.opacity = 1;
+    passepartout.style.opacity = 1;
+  }, 300);
 
-    carouselItemImages.forEach(image => {
-      image.classList.remove("smaller-image");
-    });
+  cImages.forEach(img => img.classList.remove("smaller-image"));
 
-    if (isValidCarouselInstance(carouselInstance)) {
-      carouselInstance.to(0);
-    }
+  isValidCarouselInstance(cInstance) && cInstance.to(0);
 
-    if (isValidElement(carouselIndicators)) {
-      while (carouselIndicators.firstChild) {
-        carouselIndicators.removeChild(carouselIndicators.firstChild);
-      }
-    }
+  if (isValidElement(cIndicators)) {
+  cIndicators.innerHTML = "";
+}
 
-    carouselItemImages.forEach(image => {
-      image.classList.add("smaller-image");
-    });
+  cImages.forEach(img => img.classList.add("smaller-image"));
 
-    if (isValidNodeList(carouselControls)) {
-      carouselControls.forEach(control => {
-        control.style.display = "none";
-      });
-    }
+  isValidNodeList(cControls) && cControls.forEach(control => control.style.display = "none");
+}
+
+const initializeElements = () => {
+  cElement = document.querySelector("#carousel-product");
+  cControls = cElement.querySelectorAll(".carousel-control-prev, .carousel-control-next");
+  cInstance = Carousel.getOrCreateInstance(cElement);
+  cIndicators = document.querySelector(".carousel-indicators");
+  cImages = document.querySelectorAll(".carousel-item img");
+  cIndicators = document.querySelector(".carousel-indicators");
+  
+  if (cIndicators) originalIndicatorsHTML = cIndicators.innerHTML;
+  
+  variantPickerOptions = document.querySelectorAll(".variant-picker__option");
+  labelElements = document.querySelectorAll('.btn-group label');
+  frame = document.getElementById("frame-container");
+  passepartout = document.getElementById('passepartout-container');
+  passepartout_img = document.getElementById('passepartout-img');
+  frame_img = document.getElementById('frame-img');
 }
 
 let originalIndicatorsHTML = "";
-let variantValue = ""; // Store the original indicators HTML
-let labelElements;
-let carouselItemImages;
-let carouselInstance;
-let carouselIndicators;
-let carouselControls;
-let variantPickerOptions;
-let frame;
-let passepartout;
-let frameTypeClicked = false;
+let variantValue = "";
+let labelElements, cImages, cInstance, cIndicators, cControls, cElement, variantPickerOptions;
+let frame, passepartout, passepartout_img, frame_img;
+let frameTypeClicked = false, passepartoutClicked = false;
 
 document.addEventListener("DOMContentLoaded", function () {
-  const carouselElement = document.querySelector("#carousel-product");
-  carouselControls = carouselElement.querySelectorAll(
-    ".carousel-control-prev, .carousel-control-next"
-  );
-  carouselInstance = Carousel.getOrCreateInstance(carouselElement); 
-
-  carouselIndicators = document.querySelector(".carousel-indicators");
-  if (carouselIndicators) {
-    originalIndicatorsHTML = carouselIndicators.innerHTML;
-  }
-
-  variantPickerOptions = document.querySelectorAll(
-    ".variant-picker__option"
-  );
-
-  labelElements = document.querySelectorAll('.btn-group label');
+  initializeElements();
 
   if (variantPickerOptions) {
     variantPickerOptions.forEach(option => {
       option.addEventListener("click", function () {
         const variantId = parseInt(this.getAttribute("value"));
+
         fetch(`api/variant_price/${variantId}`)
           .then(response => response.json())
           .then(result => {
-            document.querySelector(
-              ".text-info"
-            ).innerHTML = `$ ${result.price}`;
-            document.querySelector(
-              ".stock"
-            ).innerHTML = `Stock: ${result.stock}`;
-            variantValue = result.title;
-            frame = document.getElementById("frame-container");
-            passepartout = document.getElementById('passepartout-container');
-            carouselItemImages =
-              document.querySelectorAll(".carousel-item img");
-            const carouselIndicators = document.querySelector(
-              ".carousel-indicators"
-            );
+            if (result.price != 0) document.querySelector(".text-info").innerHTML = `$ ${result.price}`;            
 
-            const passepartout_img = document.getElementById('passepartout-img');
-            const frame_img = document.getElementById('frame-img');
-            
-            switch (variantValue.toLowerCase()) {
-              case 'framed':
-                showFrame();
-                  break;
-              case 'unframed':
-                frame.style.opacity = 0; // Make the #frame div fully transparent
-                passepartout.style.opacity = 0;
+            const variantActions = {
+              'framed': selectFramedVariant,
+              'unframed': () => handleUnframed(),
+              'blue': () => setPassepartoutColor("blue"),
+              'red': () => setPassepartoutColor("red"),
+              'green': () => setPassepartoutColor("green"),
+              'brown': () => setPassepartoutColor("brown"),
+              'violet': () => setPassepartoutColor("violet"),
+              'classic': () => setFrameColor("classic-frame"),
+              'golden': () => setFrameColor("golden-frame"),
+              'midnight': () => setFrameColor("midnight-frame"),
+              'default': () => setPassepartoutColor("blue"),
+            };
 
-                carouselItemImages.forEach(image => {
-                  image.classList.remove("smaller-image");
-                });
-  
-                frame.style.width = "100%";
-                frame.style.height = "100%";
-                passepartout.style.width = "100%";
-                passepartout.style.height = "100%";
-  
-                if (isValidElement(carouselIndicators)) {
-                  carouselIndicators.innerHTML = originalIndicatorsHTML;
-                }
-  
-                if (isValidNodeList(carouselControls)) {
-                  carouselControls.forEach(control => {
-                    control.style.display = "flex";
-                  });
-                }
-
-                unselectFramedVariants()
-                  break;
-                case 'blue': 
-                  passepartout_img.src = changeColor(passepartout, "data-blue");
-                  break;
-                case 'red':  
-                  passepartout_img.src = changeColor(passepartout, "data-red");
-                  break;
-                case 'green':
-                  passepartout_img.src = changeColor(passepartout, "data-green");
-                  break;
-                case 'brown':
-                  passepartout_img.src = changeColor(passepartout, "data-brown");
-                  break;
-                case 'violet':
-                  passepartout_img.src = changeColor(passepartout, "data-violet");
-                  break;
-                case 'classic':
-                  frameTypeClicked = true;
-                  frame_img.src = changeColor(frame, "data-classic-frame");
-                  break;
-                case 'golden':
-                  frameTypeClicked = true;
-                  frame_img.src = changeColor(frame, "data-golden-frame");
-                  break;
-                case 'midnight':
-                  frameTypeClicked = true;
-                  frame_img.src = changeColor(frame, "data-midnight-frame");
-                  break;
-              default:
-                  passepartout_img.src = passepartout.getAttribute("data-blue");
-                  break;
-              }  
+            const action = variantActions[variantValue.toLowerCase()] || variantActions['default'];
+            action();
           })
           .catch(error => console.error(error));
       });
     });
   }
-  isVariantSelected();
+
+  isVariantSelectedBeforeDOMLoaded();
 });
+
+const setPassepartoutColor = (color) => {
+  passepartoutClicked = true;
+  passepartout_img.src = setColor(passepartout, `data-${color}`);
+};
+
+const setFrameColor = (type) => {
+  frameTypeClicked = true;
+  frame_img.src = setColor(frame, `data-${type}`);
+};
+
+const handleUnframed = () => {
+  frame.style.opacity = 0;
+  passepartout.style.opacity = 0;
+  cImages.forEach(img => img.classList.remove("smaller-image"));
+  frame.style.width = "100%";
+  frame.style.height = "100%";
+  passepartout.style.width = "100%";
+  passepartout.style.height = "100%";
+
+  if (isValidElement(cIndicators)) cIndicators.innerHTML = originalIndicatorsHTML;
+  if (isValidNodeList(cControls)) cControls.forEach(control => control.style.display = "flex");
+  unselectFramedVariants();
+};

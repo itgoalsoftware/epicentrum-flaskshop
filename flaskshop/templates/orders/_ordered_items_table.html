@@ -87,7 +87,7 @@
         </div>
         <div class="col-4">
             <p class="float-right">
-                -${{ order.discount_amount  }}
+                -${{ order.discount_amount }}
             </p>
         </div>
     </div>
@@ -103,7 +103,7 @@
         </div>
         <div class="col-4">
             <p class="float-right">
-                ${{ order.total  }}
+                ${{ order.total }}
             </p>
         </div>
     </div>
@@ -121,11 +121,12 @@
         </div>
         {% if order.status_human == "unfulfilled" %}
         <div class="col-6">
-            <span class="float-right">{% trans %}Please pay before 00:30, else the order will auto closed{% endtrans %}</span>
+            <span class="float-right">{% trans %}Please pay before 00:30, else the order will auto closed{% endtrans
+                %}</span>
             <a href="{{ url_for('order.ali_pay', token=order.token) }}" class="btn btn-primary float-right">
                 {% trans %}Alipay{% endtrans %}
             </a>
-            <a href="{{ url_for('order.test_pay', token=order.token) }}" class="btn secondary float-right">
+            <a href="{{ url_for('order.test_pay_flow', token=order.token) }}" class="btn secondary float-right">
                 {% trans %}Pay for test{% endtrans %}
             </a>
             <a href="{{ url_for('order.cancel_order', token=order.token) }}" class="btn danger float-right">
