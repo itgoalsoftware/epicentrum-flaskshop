@@ -2,20 +2,24 @@ import { Carousel } from "bootstrap/dist/js/bootstrap.esm.js";
 
 
 let originalIndicatorsHTML = "";
-let labelElements, cImages, cInstance, cIndicators, cControls, cElement, variantPickerOptions;
+let labelElements, cImages, cInstance, cIndicators, cControls, cElement;
 let frame, passepartout;
 let cachedVariantsArray = null;
 let productPrice;
 
 document.addEventListener("DOMContentLoaded", function () {
-  initializeElements();
+  const elements = initializeElements();
+  const variantPickerOptions = elements.variantPickerOptions;
 
-  attachVariantListeners();
+  attachVariantListeners(variantPickerOptions);
 
-  isVariantSelectedBeforeDOMLoaded();
+  const selectedOption = isVariantSelectedBeforeDOMLoaded(variantPickerOptions);
+  if (selectedOption) {
+    handleVariantClick(selectedOption);
+  }
 });
 
-const attachVariantListeners = () => {
+const attachVariantListeners = (variantPickerOptions) => {
   if (variantPickerOptions) {
     variantPickerOptions.forEach(option => {
       option.addEventListener("click", () => handleVariantClick(option));
@@ -23,16 +27,7 @@ const attachVariantListeners = () => {
   }
 };
 
-const parseVariantId = (option) => {
-  const variantId = parseInt(option.getAttribute("value"));
-  return variantId;
-};
-
-const findVariantById = (variantsArray, variantId) => {
-  return variantsArray.find(variant => variant.id === variantId);
-};
-
-const handleVariantClick = (option) => {
+const handleVariantClick = async (option) => {
   const variantId = parseInt(option.getAttribute("value"));
 
   fetchAllVariantsData()
@@ -42,21 +37,20 @@ const handleVariantClick = (option) => {
     });
 };
 
-const fetchAllVariantsData = () => {
+const fetchAllVariantsData = async () => {
   if (cachedVariantsArray !== null) {
-    return Promise.resolve(cachedVariantsArray);
+    return cachedVariantsArray;
   }
 
-  return fetch('api/all_variants_data')
-    .then(response => response.json())
-    .then(variantsArray => {
-      cachedVariantsArray = variantsArray;
-      return variantsArray;
-    })
-    .catch(error => {
-      console.error(error);
-      return [];
-    });
+  try {
+    const response = await fetch('api/all_variants_data');
+    const variantsArray = await response.json();
+    cachedVariantsArray = variantsArray;
+    return variantsArray;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
 
 const handleFetchedVariantData = (result) => {
@@ -146,7 +140,7 @@ const selectFramedVariant = () => {
   showFrame();
 };
 
-const fetchPriceOverride = (label) => {
+const fetchPriceOverride = async (label) => {
     fetchAllVariantsData()
     .then(variantsArray => {
       const result = variantsArray.find(variant => variant.title.toLowerCase().trim() === label.toLowerCase().trim());
@@ -259,21 +253,33 @@ const initializeElements = () => {
   
   if (cIndicators) originalIndicatorsHTML = cIndicators.innerHTML;
   
-  variantPickerOptions = document.querySelectorAll(".variant-picker__option");
+  const variantPickerOptions = document.querySelectorAll(".variant-picker__option");
   labelElements = document.querySelectorAll('.btn-group label');
   frame = document.getElementById("frame-container");
   passepartout = document.getElementById('passepartout-container');
   productPrice = document.querySelector(".text-info").innerHTML;
+
+  return {
+    cElement,
+    cControls,
+    cInstance,
+    cImages,
+    cIndicators,
+    variantPickerOptions,
+    labelElements,
+    frame,
+    passepartout,
+    productPrice
+  };
 }
 
 const isValidElement = (element) => element instanceof HTMLElement;
 const isValidCarouselInstance = (instance) => instance instanceof Carousel;
 const isValidNodeList = (nodeList) => nodeList && nodeList.length > 0;
 
-const isVariantSelectedBeforeDOMLoaded = () => {
+const isVariantSelectedBeforeDOMLoaded = (variantPickerOptions) => {
   for (const option of variantPickerOptions) {
     if (option.checked) {
-      option.dispatchEvent(new Event('click', { bubbles: true, cancelable: true }));
       return option;
     }
   }
