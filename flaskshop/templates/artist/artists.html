@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block breadcrumb %}
+<ul class="breadcrumbs list-unstyled">
+    <li>
+        <a href="{{ url_for('public.home') }}">
+            {% trans %}Home{% endtrans %}
+        </a>
+    </li>
+    <li>
+        <a href="{{ url_for('product.show_all_artists') }}">
+            {% trans %}Artists{% endtrans %}
+        </a>
+    </li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        {% for artist, product_count in artists_with_product_count %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="/products/artist/{{artist.title}}" class="text-decoration-none text-dark">{{ artist.title }} ({{ product_count }}) </a>
+                    </h5>
+                    <p class="card-text">Artist</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

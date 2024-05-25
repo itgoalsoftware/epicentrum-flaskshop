@@ -1,0 +1,44 @@
+<div id="carousel-container">
+    <div id="carousel-product" class="carousel slide" data-bs-ride="false" data-bs-pause="false" data-bs-wrap="true">
+        <div class="carousel-inner" role="listbox">
+            {% for image in images %}
+            <div class="carousel-item{% if loop.first %} active{% endif %}">
+                <img class="d-block img-fluid lazyload lazypreload" alt="" src="{{ image }}" data-src="{{ image }}"
+                    width="255" />
+            </div>
+            {% endfor %}
+        </div>
+        {% if images|length > 1 %}
+        <a class="carousel-control-prev" data-bs-target="#carousel-product" role="button" data-bs-slide="prev">
+            <svg data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"></svg>
+        </a>
+        <a class="carousel-control-next" data-bs-target="#carousel-product" role="button" data-bs-slide="next">
+            <svg data-src="{{ url_for('static', filename='img/gallery-arrow.svg') }}"></svg>
+        </a>
+
+        {% endif %}
+        <ol class="carousel-indicators d-none d-md-block">
+            {% for image in images %} {% if images|length > 1 %}
+            <li data-bs-target="#carousel-product" data-bs-slide-to="{{ loop.index - 1 }}" {% if loop.first %}
+                class="active" {% endif %}>
+                <img class="lazyload lazypreload" src="{{ image }}" data-src="{{ image }}" />
+            </li>
+            {% endif %} {% endfor %}
+        </ol>
+        <div id="passepartout-container" data-blue="{{ url_for('static', filename='img/black_blue.png') }}"
+            data-red="{{ url_for('static', filename='img/black_red.png') }}"
+            data-green="{{ url_for('static', filename='img/black_green.png') }}"
+            data-brown="{{ url_for('static', filename='img/black_brown.png') }}"
+            data-violet="{{ url_for('static', filename='img/black_violet.png') }}">
+            <img id="passepartout-img" class="empty-image" src="{{ url_for('static', filename='img/black_blue.png') }}"
+                alt="Empty Inside">
+        </div>
+        <div id="frame-container" data-classic="{{ url_for('static', filename='img/classic_frame.png') }}"
+            data-golden=" {{ url_for('static', filename='img/golden_frame.png' ) }}"
+            data-midnight=" {{ url_for('static', filename='img/midnight_frame.png' ) }}">
+            <img id="frame-img" class="empty-image" src="{{ url_for('static', filename='img/classic_frame.png') }}"
+                alt="Frame">
+        </div>
+
+    </div>
+</div>
