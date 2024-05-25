@@ -79,6 +79,7 @@ The default admin account is:
 | editor   | editor   | editor              |
 | op       | op       | operator            |
 
+
 ### Frontend
 
 [](https://github.com/hjlarry/flask-shop/wiki/Secondary-development#frontend)
@@ -130,7 +131,7 @@ pybabel update -i messages.pot -d . -l zh_CN
 You can visit the `http://127.0.0.1:5000/?lang=bg` to change the frontend language.
 
 Visit [flask_babel](https://python-babel.github.io/flask-babel/) to see more config and details.
-
+<br><br>
 # Contributing Guide
 
 Thank you for contributing to the project.
@@ -166,7 +167,6 @@ $ git config --global user.email 'your email'
 $ git clone https://github.com/{username}/epicentrum-flaskshop
 $ cd flask-shop
 $ git remote add origin https://github.com/itgoalsoftware/epicentrum-flaskshop/
-
 ```
 
 -   Create a virtual environment and install requirements:
@@ -200,8 +200,6 @@ $ git push origin your-branch-name
 -   [Create a pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request). Link to the issue being addressed with `fixes #123` in the pull request.
 
 ### Running the tests
-
-[](https://github.com/hjlarry/flask-shop/wiki/Contributing-Guide#running-the-tests)
 
 Run the basic test suite with pytest:
 
