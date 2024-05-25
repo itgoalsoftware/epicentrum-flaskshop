@@ -1,3 +1,4 @@
+# Ingore compiled Python files
 *.py[cod]
 
 # C extensions
