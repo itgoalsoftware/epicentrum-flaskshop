@@ -194,8 +194,7 @@ $ git checkout -b your-branch-name origin/main
 -   Push your commits to your fork on GitHub:
 
 ```
-$ git push --set-upstream origin your-branch-name
-
+$ git push origin your-branch-name
 ```
 
 -   [Create a pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request). Link to the issue being addressed with `fixes #123` in the pull request.
