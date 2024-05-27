@@ -75,17 +75,17 @@ class PhoneNumber(phonenumbers.PhoneNumber):
         """
         return phonenumbers.is_valid_number(self)
 
-    def format_as(self, format):
+    def format_as(self, phone_number_format):
         """
         Format the phone number in the specified format.
 
         Args:
-            format (phonenumbers.PhoneNumberFormat): The format to use.
+            number_format (phonenumbers.PhoneNumberFormat): The format to use.
 
-        Returns:
-            str: The formatted phone number.
+            Returns:
+                str: The formatted phone number.
         """
-        return phonenumbers.format_number(self, format)
+        return phonenumbers.format_number(self, phone_number_format)
 
     @property
     def as_international(self):
@@ -265,7 +265,8 @@ def gen_tmp_pwd(size=8, chars=string.ascii_uppercase + string.digits):
 
     Args:
         size (int, optional): The length of the password. Defaults to 8.
-        chars (str, optional): The characters to use for the password. Defaults to uppercase letters and digits.
+        chars (str, optional): The characters to use for the password. 
+        Defaults to uppercase letters and digits.
 
     Returns:
         str: The generated password.

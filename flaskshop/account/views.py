@@ -55,9 +55,11 @@ def resetpwd():
     """
     Reset the user's password.
 
-    This view handles the password reset process. If the form is validated, a new temporary password is generated,
+    This view handles the password reset process. 
+    If the form is validated, a new temporary password is generated,
     sent to the user's email, and the user's password is updated. 
-    A success message is flashed upon successful reset, and the user is redirected to the login page.
+    A success message is flashed upon successful reset, 
+    and the user is redirected to the login page.
 
     Returns:
         A rendered template for the login page with a reset flag or a redirect to the login page.
@@ -80,7 +82,9 @@ def logout():
     """
     Log out the current user.
 
-    This view logs out the current user, flashes an informational message, and redirects to the home page.
+    This view logs out the current user, 
+    flashes an informational message, 
+    and redirects to the home page.
 
     Returns:
         A redirect to the home page.
@@ -94,8 +98,10 @@ def signup():
     """
     Register a new user.
 
-    This view renders the signup page and handles the registration form submission. If the form is validated,
-    a new user is created and logged in. A success message is flashed upon successful registration.
+    This view renders the signup page and handles the registration form submission. 
+    If the form is validated,
+    a new user is created and logged in.
+    A success message is flashed upon successful registration.
 
     Returns:
         A rendered template for the signup page or a redirect to the home page.
@@ -144,8 +150,8 @@ def addresses():
     Returns:
         A rendered template for the addresses page.
     """
-    addresses = current_user.addresses
-    return render_template("account/addresses.html", addresses=addresses)
+    user_addresses = current_user.addresses
+    return render_template("account/addresses.html", addresses=user_addresses)
 
 
 def edit_address():
@@ -153,12 +159,14 @@ def edit_address():
     Create or edit a user address.
 
     This view handles both the creation of a new address and the editing of an existing address.
-    If an address ID is provided, the existing address is loaded and the form is populated with its data.
-    If the form is submitted and validated, the address is either updated or created based on whether
-    an address ID was provided.
+    If an address ID is provided, 
+    the existing address is loaded and the form is populated with its data.
+    If the form is submitted and validated, the address is either updated or 
+    created based on whether an address ID was provided.
 
     Returns:
-        A rendered template for the address edit page or a redirect to the account index page with a success message.
+        A rendered template for the address edit page or
+        a redirect to the account index page with a success message.
     """
     form = AddressForm(request.form)
     address_id = request.args.get("id", None, type=int)
@@ -188,7 +196,7 @@ def edit_address():
         "account/address_edit.html", form=form, address_id=address_id)
 
 
-def delete_address(id):
+def delete_address(address_id):
     """
     Delete a user address.
 
@@ -196,12 +204,12 @@ def delete_address(id):
     it is deleted.
 
     Args:
-        id (int): The ID of the address to be deleted.
+        address_id (int): The ID of the address to be deleted.
 
     Returns:
         A redirect to the account index page.
     """
-    user_address = UserAddress.get_by_id(id)
+    user_address = UserAddress.get_by_id(address_id)
     if user_address in current_user.addresses:
         UserAddress.delete(user_address)
     return redirect(url_for("account.index") + "#addresses")
